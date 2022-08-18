@@ -15,7 +15,7 @@ Drop catalog demo_youssef cascade;
 
 -- COMMAND ----------
 
-create catalog demo_youssef;
+--create catalog demo_youssef;
 use catalog demo_youssef;
 
 -- COMMAND ----------
@@ -25,7 +25,7 @@ use catalog demo_youssef;
 
 -- COMMAND ----------
 
-create database boat;
+--create database boat;
 use boat;
 
 -- COMMAND ----------
@@ -194,3 +194,7 @@ insert into disaster.features.persons values ("Youssef","Mrini","Lord"),("Quenti
 -- COMMAND ----------
 
 select * from disaster.features.persons
+
+-- COMMAND ----------
+
+drop table demo_youssef.boat.titanic_redacted_x
