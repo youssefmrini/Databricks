@@ -5,7 +5,7 @@
 
 -- COMMAND ----------
 
-Drop catalog demo_youssef cascade;
+Drop catalog demo_uc cascade;
 
 -- COMMAND ----------
 
@@ -15,8 +15,8 @@ Drop catalog demo_youssef cascade;
 
 -- COMMAND ----------
 
---create catalog demo_youssef;
-use catalog demo_youssef;
+create catalog demo_uc;
+use catalog demo_uc;
 
 -- COMMAND ----------
 
@@ -25,35 +25,45 @@ use catalog demo_youssef;
 
 -- COMMAND ----------
 
---create database boat;
+create database boat;
 use boat;
 
 -- COMMAND ----------
 
 -- MAGIC %md 
 -- MAGIC <h2> Convert a Hive Metastore Table (Managed Table) to Unity Catalog </h2>
+-- MAGIC 
+-- MAGIC <H4> Managed Tables support Only Delta Tables </H4> 
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC <h2> CTAS can be used for parquet tables </h2>
 
 -- COMMAND ----------
 
 --SQL
 
-CREATE TABLE demo_youssef.boat.titanic
-AS SELECT * FROM hive_metastore.default.titanic;
+CREATE TABLE demo_uc.boat.titanic_v1
+AS SELECT * FROM hive_metastore.default.titanic_parquet;
 
+--%python
+--df = spark.table("hive_metastore.default.titanic")
+--df.write.saveAsTable("demo_youssef.boat.titanic")
 
 
 -- COMMAND ----------
 
--- MAGIC %python
--- MAGIC df = spark.table("hive_metastore.default.titanic")
--- MAGIC 
--- MAGIC df.write.saveAsTable(
--- MAGIC   name = "demo_youssef.boat.titanic"
--- MAGIC )
+-- MAGIC %md
+-- MAGIC <h2> Delta Clones can only be used for Delta Tables </h2>
 
 -- COMMAND ----------
 
-show grant on demo_youssef.boat.titanic
+CREATE TABLE demo_uc.boat.titanic_v2 clone hive_metastore.default.titanic;
+
+-- COMMAND ----------
+
+show grant on demo_uc.boat.titanic_v1
 
 -- COMMAND ----------
 
@@ -62,13 +72,22 @@ show grant on demo_youssef.boat.titanic
 
 -- COMMAND ----------
 
-grant usage, create on catalog demo_youssef to `youssef.mrini@databricks.com`;
+grant usage, create on catalog demo_uc to `youssef.mrini@databricks.com`;
 grant usage, create on schema boat to  `youssef.mrini@databricks.com`;
-grant select, modify on table titanic to  `youssef.mrini@databricks.com`;
+grant select, modify on table titanic_v2 to  `youssef.mrini@databricks.com`;
+grant select, modify on table titanic_v1 to  `youssef.mrini@databricks.com`;
 
 -- COMMAND ----------
 
-show grant on titanic
+show grant on catalog demo_uc
+
+-- COMMAND ----------
+
+show grant on schema boat
+
+-- COMMAND ----------
+
+show grant on titanic_v1
 
 -- COMMAND ----------
 
@@ -79,7 +98,7 @@ show grant on titanic
 
 
 -- Upgrade hive_metastore.default.externaldelta to demo_youssef.boat.externaldelta
-CREATE TABLE demo_youssef.boat.externaldelta LIKE hive_metastore.default.externaldelta COPY LOCATION;
+CREATE TABLE demo_uc.boat.externaldelta LIKE hive_metastore.default.externaldelta COPY LOCATION;
 ALTER TABLE hive_metastore.default.externaldelta SET TBLPROPERTIES ('upgraded_to' = 'demo_youssef.boat.externaldelta');
 
 
@@ -92,7 +111,7 @@ ALTER TABLE hive_metastore.default.externaldelta SET TBLPROPERTIES ('upgraded_to
 
 -- COMMAND ----------
 
-select * from titanic
+select * from titanic_v1
 
 -- COMMAND ----------
 
@@ -102,9 +121,27 @@ select * from titanic
 
 -- COMMAND ----------
 
-GRANT CREATE TABLE, read files, write files ON STORAGE CREDENTIAL `songkun-uc-external-1` TO `youssef.mrini@databricks.com`;
-SHOW GRANTS `youssef.mrini@databricks.com` ON STORAGE CREDENTIAL `songkun-uc-external-1`;
+show external locations
 
+-- COMMAND ----------
+
+describe external location `songkun-uc-external-1`
+
+
+-- COMMAND ----------
+
+show storage credentials;
+
+-- COMMAND ----------
+
+describe storage credential `songkun-uc-external-1`
+
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC <h4> Grant and manage permissions for  External location </H4>
 
 -- COMMAND ----------
 
@@ -113,15 +150,36 @@ SHOW GRANTS `youssef.mrini@databricks.com` ON external LOCATION `songkun-uc-exte
 
 -- COMMAND ----------
 
-create or replace table  demo_youssef.boat.titanic_ext 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC <h4> Grant andmanage permissions for Storage Credential </H4>
+
+-- COMMAND ----------
+
+GRANT CREATE TABLE, read files, write files ON STORAGE CREDENTIAL `songkun-uc-external-1` TO `youssef.mrini@databricks.com`;
+SHOW GRANTS `youssef.mrini@databricks.com` ON STORAGE CREDENTIAL `songkun-uc-external-1`;
+
+
+-- COMMAND ----------
+
+create or replace table  demo_uc.boat.titanic_ext 
 using delta location "abfss://songkun-uc-external-1@songkunucexternal.dfs.core.windows.net/demo" 
 as 
 select count(PassengerId) as Nbr, Sex,Pclass, 
        case when Survived=0 then "Dead" 
        else "Survived" 
        end as Status
-from demo_youssef.boat.titanic 
+from demo_uc.boat.titanic_v2 
 group by Survived,Sex,Pclass
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC <h4> Accessing Data </h4>
+
+-- COMMAND ----------
+
+List "abfss://songkun-uc-external-1@songkunucexternal.dfs.core.windows.net/demo" 
 
 -- COMMAND ----------
 
@@ -135,8 +193,14 @@ select * from titanic_ext
 
 -- COMMAND ----------
 
+-- MAGIC %sql
+-- MAGIC 
+-- MAGIC drop view demo_youssef.boat.titanic_redacted;
+
+-- COMMAND ----------
+
 -- Column Level Permissions
-create view demo_youssef.boat.titanic_redacted  as select  Nbr, case when is_account_group_member('CSE-EMEA') then Sex else '###' end as Sex, Status from demo_youssef.boat.titanic_ext
+create view demo_youssef.boat.titanic_redacted  as select  Nbr, case when is_account_group_member('EMEA') then Sex else '###' end as Sex, Status from demo_youssef.boat.titanic_ext
 
 
 -- COMMAND ----------
@@ -189,11 +253,11 @@ CREATE TABLE orders(orderid BIGINT NOT NULL CONSTRAINT orders_pk PRIMARY KEY,
 
 -- COMMAND ----------
 
-insert into disaster.features.persons values ("Youssef","Mrini","Lord"),("Quentin","ambard","Excellence"),("Laurent","Letturgey","LOSC")
+insert into demo_youssef.features.persons values ("Youssef","Mrini","Lord"),("Quentin","ambard","Excellence"),("Laurent","Letturgey","LOSC")
 
 -- COMMAND ----------
 
-select * from disaster.features.persons
+select * from demo_youssef.features.persons
 
 -- COMMAND ----------
 
