@@ -48,6 +48,10 @@ create recipient  if not exists consumer comment "my first consumer"
 
 -- COMMAND ----------
 
+describe recipient consumer
+
+-- COMMAND ----------
+
 show grants on share youssef_data 
 
 -- COMMAND ----------

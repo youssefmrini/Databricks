@@ -192,3 +192,23 @@ fin.write.mode("append").option("mergeSchema", "true").saveAsTable("verbose.stat
 display(fin)
 
 
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC use stats;
+# MAGIC create table verbose.stats.unitycatalog using delta;
+# MAGIC COPY INTO verbose.stats.unitycatalog 
+# MAGIC FROM 'abfss://insights-logs-unitycatalog@songkunucexternal.dfs.core.windows.net/resourceId=/SUBSCRIPTIONS/3F2E4D32-8E8D-46D6-82BC-5BB8D962328B/RESOURCEGROUPS/SONGKUN-DEMO-RG-DO-NOT-DELETE/PROVIDERS/MICROSOFT.DATABRICKS/WORKSPACES/SONGKUN-DEMO-UC-DELTASHARING/y=*/m=*/d=*/h=*/m=*/'
+# MAGIC FILEFORMAT = JSON
+# MAGIC COPY_OPTIONS ( 'allowBackslashEscapingAnyCharacter'='true','badRecordsPath'='true', 'mergeSchema'='true');
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select distinct properties.actionName from verbose.stats.unitycatalog 
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select identity, properties.* from verbose.stats.unitycatalog where properties.actionName="createTable"

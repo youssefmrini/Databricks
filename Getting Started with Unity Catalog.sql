@@ -6,6 +6,7 @@
 -- COMMAND ----------
 
 Drop catalog demo_uc cascade;
+--drop catalog demo_uc2
 
 -- COMMAND ----------
 
@@ -54,12 +55,16 @@ AS SELECT * FROM hive_metastore.default.titanic_parquet;
 
 -- COMMAND ----------
 
+describe extended demo_uc.boat.titanic_v1
+
+-- COMMAND ----------
+
 -- MAGIC %md
 -- MAGIC <h2> Delta Clones can only be used for Delta Tables </h2>
 
 -- COMMAND ----------
 
-CREATE TABLE demo_uc.boat.titanic_v2 clone hive_metastore.default.titanic;
+CREATE TABLE demo_uc.boat.titanic_v2 deep clone hive_metastore.default.titanic;
 
 -- COMMAND ----------
 
@@ -88,20 +93,6 @@ show grant on schema boat
 -- COMMAND ----------
 
 show grant on titanic_v1
-
--- COMMAND ----------
-
--- MAGIC %md 
--- MAGIC <h2> Convert a Hive Metastore Table (External Table) to Unity Catalog </h2>
-
--- COMMAND ----------
-
-
--- Upgrade hive_metastore.default.externaldelta to demo_youssef.boat.externaldelta
-CREATE TABLE demo_uc.boat.externaldelta LIKE hive_metastore.default.externaldelta COPY LOCATION;
-ALTER TABLE hive_metastore.default.externaldelta SET TBLPROPERTIES ('upgraded_to' = 'demo_youssef.boat.externaldelta');
-
-
 
 -- COMMAND ----------
 
@@ -152,7 +143,7 @@ SHOW GRANTS `youssef.mrini@databricks.com` ON external LOCATION `songkun-uc-exte
 
 -- MAGIC %md
 -- MAGIC 
--- MAGIC <h4> Grant andmanage permissions for Storage Credential </H4>
+-- MAGIC <h4> Grant and manage permissions for Storage Credential </H4>
 
 -- COMMAND ----------
 
@@ -174,6 +165,10 @@ group by Survived,Sex,Pclass
 
 -- COMMAND ----------
 
+describe extended demo_uc.boat.titanic_ext 
+
+-- COMMAND ----------
+
 -- MAGIC %md
 -- MAGIC <h4> Accessing Data </h4>
 
@@ -185,6 +180,7 @@ List "abfss://songkun-uc-external-1@songkunucexternal.dfs.core.windows.net/demo"
 
 select * from titanic_ext 
 
+
 -- COMMAND ----------
 
 -- MAGIC %md
@@ -195,28 +191,37 @@ select * from titanic_ext
 
 -- MAGIC %sql
 -- MAGIC 
--- MAGIC drop view demo_youssef.boat.titanic_redacted;
+-- MAGIC drop view demo_uc.boat.titanic_redacted;
 
 -- COMMAND ----------
 
 -- Column Level Permissions
-create view demo_youssef.boat.titanic_redacted  as select  Nbr, case when is_account_group_member('EMEA') then Sex else '###' end as Sex, Status from demo_youssef.boat.titanic_ext
+create view demo_uc.boat.titanic_redacted  as select  Nbr, case when is_account_group_member('EMEA') then Sex else '###' end as Sex, Status from demo_uc.boat.titanic_ext
 
 
 -- COMMAND ----------
 
 
-select * from demo_youssef.boat.titanic_redacted
+select * from demo_uc.boat.titanic_redacted
 
 -- COMMAND ----------
 
 --Row Level Permissions
-create view demo_youssef.boat.titanic_redacted_row as select * from demo_youssef.boat.titanic_ext where case when is_account_group_member('CSE-EMEA') then True else Nbr<5 end
+create view demo_uc.boat.titanic_redacted_row as select * from demo_uc.boat.titanic_ext where case when is_account_group_member('EMEA') then True else Nbr<5 end
 
 
 -- COMMAND ----------
 
-select * from demo_youssef.boat.titanic_redacted_row
+select * from demo_uc.boat.titanic_redacted_row
+
+-- COMMAND ----------
+
+create view demo_uc.boat.titanic_redacted_row_v2 as select * from demo_uc.boat.titanic_ext where case when is_account_group_member('CSE-EMEA') then True else Nbr<5 end
+
+
+-- COMMAND ----------
+
+select * from demo_uc.boat.titanic_redacted_row_v2
 
 -- COMMAND ----------
 
@@ -225,8 +230,8 @@ select * from demo_youssef.boat.titanic_redacted_row
 
 -- COMMAND ----------
 
-use catalog demo_youssef;
-drop database features cascade;
+use catalog demo_uc;
+--drop database features cascade;
 
 -- COMMAND ----------
 
@@ -250,6 +255,10 @@ CREATE TABLE customers(customerid STRING NOT NULL PRIMARY KEY, name STRING);
 CREATE TABLE orders(orderid BIGINT NOT NULL CONSTRAINT orders_pk PRIMARY KEY,
                       customerid STRING CONSTRAINT orders_customers_fk REFERENCES customers);
 
+
+-- COMMAND ----------
+
+describe extended persons
 
 -- COMMAND ----------
 
