@@ -165,6 +165,18 @@ group by Survived,Sex,Pclass
 
 -- COMMAND ----------
 
+create table  demo_uc.boat.titanic_ext_parquet 
+using parquet location "abfss://songkun-uc-external-1@songkunucexternal.dfs.core.windows.net/ex" 
+as 
+select count(PassengerId) as Nbr, Sex,Pclass, 
+       case when Survived=0 then "Dead" 
+       else "Survived" 
+       end as Status
+from demo_uc.boat.titanic_v2 
+group by Survived,Sex,Pclass
+
+-- COMMAND ----------
+
 describe extended demo_uc.boat.titanic_ext 
 
 -- COMMAND ----------
@@ -236,7 +248,7 @@ use catalog demo_uc;
 -- COMMAND ----------
 
 
-create database features;
+--create database features;
 use features;
 
 -- COMMAND ----------
@@ -262,12 +274,8 @@ describe extended persons
 
 -- COMMAND ----------
 
-insert into demo_youssef.features.persons values ("Youssef","Mrini","Lord"),("Quentin","ambard","Excellence"),("Laurent","Letturgey","LOSC")
+insert into demo_uc.features.persons values ("Youssef","Mrini","Lord"),("Quentin","ambard","Excellence"),("Laurent","Letturgey","LOSC")
 
 -- COMMAND ----------
 
-select * from demo_youssef.features.persons
-
--- COMMAND ----------
-
-drop table demo_youssef.boat.titanic_redacted_x
+insert into demo_uc.features.pets values("booby", "Youssef","Mrini") ,("steeve","Quentin","ambard")

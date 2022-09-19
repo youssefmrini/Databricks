@@ -19,7 +19,7 @@
 
 -- COMMAND ----------
 
-create share if not exists Youssef_data comment " This is my first share"
+create share if not exists Delta_sharing comment " This is my first share"
 
 -- COMMAND ----------
 
@@ -27,15 +27,21 @@ show shares
 
 -- COMMAND ----------
 
-describe share youssef_data;
+describe share delta_sharing;
 
 -- COMMAND ----------
 
-show all in share youssef_data;
+show all in share delta_sharing;
 
 -- COMMAND ----------
 
-alter share youssef_data add table disaster.boat.titanic
+alter share delta_sharing add table disaster.boat.titanic
+
+-- COMMAND ----------
+
+alter share delta_sharing add table demo_uc.features.pets;
+alter share delta_sharing add table  demo_uc.features.persons;
+
 
 -- COMMAND ----------
 
@@ -44,23 +50,43 @@ alter share youssef_data add table disaster.boat.titanic
 
 -- COMMAND ----------
 
-create recipient  if not exists consumer comment "my first consumer"
+create recipient  if not exists consumers comment "my first consumer"
 
 -- COMMAND ----------
 
-describe recipient consumer
+describe recipient consumers
 
 -- COMMAND ----------
 
-show grants on share youssef_data 
+show grants on share delta_sharing 
 
 -- COMMAND ----------
 
-grant select on share youssef_data to recipient consumer
+-- MAGIC %md 
+-- MAGIC <h2> Grant access to Consumer </H2>
 
 -- COMMAND ----------
 
-show grants on share youssef_data 
+grant select on share delta_sharing to recipient consumers
+
+-- COMMAND ----------
+
+-- MAGIC %md <h2> Revoke access to Consumer </H2>
+
+-- COMMAND ----------
+
+REVOKE SELECT
+ON SHARE delta_sharing
+FROM RECIPIENT consumers;
+
+-- COMMAND ----------
+
+-- MAGIC %md <h2> Show Grants on share </H2>
+
+-- COMMAND ----------
+
+show grants on share delta_sharing
+
 
 -- COMMAND ----------
 
@@ -95,7 +121,7 @@ show grants on share youssef_data
 
 -- MAGIC %python
 -- MAGIC profile="dbfs:/sharing/config.share"
--- MAGIC shareName="youssef_data"
+-- MAGIC shareName="delta_sharing"
 -- MAGIC schemaName="boat"
 -- MAGIC tableName="titanic"
 -- MAGIC 
