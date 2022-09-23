@@ -19,7 +19,7 @@
 
 -- COMMAND ----------
 
-create share if not exists Delta_sharing comment " This is my first share"
+create share if not exists Delta_sharing_lebara comment " This is my first share"
 
 -- COMMAND ----------
 
@@ -27,20 +27,20 @@ show shares
 
 -- COMMAND ----------
 
-describe share delta_sharing;
+describe share Delta_sharing_lebara;
 
 -- COMMAND ----------
 
-show all in share delta_sharing;
+show all in share Delta_sharing_lebara;
 
 -- COMMAND ----------
 
-alter share delta_sharing add table disaster.boat.titanic
+alter share Delta_sharing_lebara add table disaster.boat.titanic
 
 -- COMMAND ----------
 
-alter share delta_sharing add table demo_uc.features.pets;
-alter share delta_sharing add table  demo_uc.features.persons;
+alter share Delta_sharing_lebara add table demo_uc.features.pets;
+alter share Delta_sharing_lebara add table  demo_uc.features.persons;
 
 
 -- COMMAND ----------
@@ -50,15 +50,15 @@ alter share delta_sharing add table  demo_uc.features.persons;
 
 -- COMMAND ----------
 
-create recipient  if not exists consumers comment "my first consumer"
+create recipient  if not exists consumers_lebara comment "my first consumer"
 
 -- COMMAND ----------
 
-describe recipient consumers
+describe recipient consumers_lebara
 
 -- COMMAND ----------
 
-show grants on share delta_sharing 
+show grants on share delta_sharing_lebara 
 
 -- COMMAND ----------
 
@@ -67,7 +67,7 @@ show grants on share delta_sharing
 
 -- COMMAND ----------
 
-grant select on share delta_sharing to recipient consumers
+grant select on share delta_sharing_lebara to recipient consumers_lebara
 
 -- COMMAND ----------
 
@@ -76,8 +76,8 @@ grant select on share delta_sharing to recipient consumers
 -- COMMAND ----------
 
 REVOKE SELECT
-ON SHARE delta_sharing
-FROM RECIPIENT consumers;
+ON SHARE delta_sharing_lebara
+FROM RECIPIENT consumers_lebara;
 
 -- COMMAND ----------
 
@@ -85,7 +85,7 @@ FROM RECIPIENT consumers;
 
 -- COMMAND ----------
 
-show grants on share delta_sharing
+show grants on share delta_sharing_lebara
 
 
 -- COMMAND ----------
@@ -121,7 +121,7 @@ show grants on share delta_sharing
 
 -- MAGIC %python
 -- MAGIC profile="dbfs:/sharing/config.share"
--- MAGIC shareName="delta_sharing"
+-- MAGIC shareName="delta_sharing_lebara"
 -- MAGIC schemaName="boat"
 -- MAGIC tableName="titanic"
 -- MAGIC 
