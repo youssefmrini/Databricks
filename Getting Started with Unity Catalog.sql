@@ -165,7 +165,13 @@ group by Survived,Sex,Pclass
 
 -- COMMAND ----------
 
---drop table demo_uc.boat.titanic_ext_parquet ;
+-- MAGIC %python
+-- MAGIC 
+-- MAGIC dbutils.fs.rm("abfss://songkun-uc-external-1@songkunucexternal.dfs.core.windows.net/parquet",recurse=True)
+
+-- COMMAND ----------
+
+drop table demo_uc.boat.titanic_ext_parquet ;
 create table  demo_uc.boat.titanic_ext_parquet 
 using parquet location "abfss://songkun-uc-external-1@songkunucexternal.dfs.core.windows.net/parquet" 
 as 
@@ -205,6 +211,8 @@ select * from titanic_ext
 -- MAGIC %sql
 -- MAGIC 
 -- MAGIC drop view demo_uc.boat.titanic_redacted;
+-- MAGIC --drop view demo_uc.boat.titanic_redacted_row;
+-- MAGIC --drop view demo_uc.boat.titanic_redacted_row_v2;
 
 -- COMMAND ----------
 
@@ -244,12 +252,12 @@ select * from demo_uc.boat.titanic_redacted_row_v2
 -- COMMAND ----------
 
 use catalog demo_uc;
---drop database features cascade;
+drop database features cascade;
 
 -- COMMAND ----------
 
 
---create database features;
+create database features;
 use features;
 
 -- COMMAND ----------
