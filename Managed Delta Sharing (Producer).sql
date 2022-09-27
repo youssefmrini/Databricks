@@ -19,6 +19,12 @@ use ingestion;
 
 -- COMMAND ----------
 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC <h2> Enable Change Data Feed </h2>
+
+-- COMMAND ----------
+
 alter share finance  
 ADD TABLE mutual_fund
 COMMENT "Change Data Feed"
@@ -26,8 +32,20 @@ WITH CHANGE DATA FEED;
 
 -- COMMAND ----------
 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC <h2> Removing a table from a share </H2>
+
+-- COMMAND ----------
+
 ALTER SHARE finance REMOVE TABLE demo_deltasharing.ingestion.mutual_fund;
 
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC <h2> Enable Sharing specific partitions </H2>
 
 -- COMMAND ----------
 
@@ -41,11 +59,28 @@ SHOW ALL IN SHARE finance;
 
 -- COMMAND ----------
 
+-- MAGIC %md
+-- MAGIC <h2> Create a recipient </H2>
+
+-- COMMAND ----------
+
 CREATE RECIPIENT IF NOT EXISTS consumer USING ID 'aws:us-west-2:171cd945-ec1f-47c4-ad88-a37afd9c0f4a';
 
 -- COMMAND ----------
 
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC <H2> Grant permissions to the recipient </H2>
+
+-- COMMAND ----------
+
 GRANT SELECT ON SHARE finance TO RECIPIENT consumer;
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC 
+-- MAGIC <H2> Revoke permissions to the recipient </H2>
 
 -- COMMAND ----------
 

@@ -14,12 +14,17 @@
 
 -- COMMAND ----------
 
+drop share Delta_sharing;
+drop recipient consumers;
+
+-- COMMAND ----------
+
 -- MAGIC %md 
 -- MAGIC <H2> Create a share </H2>
 
 -- COMMAND ----------
 
-create share if not exists Delta_sharing_studio comment " This is my first share"
+create share if not exists Delta_sharing comment " This is my first share"
 
 -- COMMAND ----------
 
@@ -27,15 +32,15 @@ show shares
 
 -- COMMAND ----------
 
-describe share Delta_sharing_studio;
+describe share Delta_sharing;
 
 -- COMMAND ----------
 
-show all in share Delta_sharing_studio;
+show all in share Delta_sharing
 
 -- COMMAND ----------
 
-alter share Delta_sharing_studio add table disaster.boat.titanic
+alter share Delta_sharing add table demo_deltasharing.ingestion.mutual_fund
 
 -- COMMAND ----------
 
@@ -50,15 +55,15 @@ alter share Delta_sharing_studio add table  demo_uc.features.persons;
 
 -- COMMAND ----------
 
-create recipient  if not exists consumers_studio comment "my first consumer"
+create recipient  if not exists consumers comment "my first consumer"
 
 -- COMMAND ----------
 
-describe recipient consumers_studio
+describe recipient consumers
 
 -- COMMAND ----------
 
-show grants on share delta_sharing_studio
+show grants on share delta_sharing
 
 -- COMMAND ----------
 
@@ -67,7 +72,7 @@ show grants on share delta_sharing_studio
 
 -- COMMAND ----------
 
-grant select on share delta_sharing_studio to recipient consumers_studio
+grant select on share delta_sharing to recipient consumers
 
 -- COMMAND ----------
 
@@ -76,8 +81,8 @@ grant select on share delta_sharing_studio to recipient consumers_studio
 -- COMMAND ----------
 
 REVOKE SELECT
-ON SHARE delta_sharing_studio
-FROM RECIPIENT consumers_studio;
+ON SHARE delta_sharing
+FROM RECIPIENT consumers;
 
 -- COMMAND ----------
 
@@ -85,7 +90,7 @@ FROM RECIPIENT consumers_studio;
 
 -- COMMAND ----------
 
-show grants on share delta_sharing_lebara
+show grants on share delta_sharing
 
 
 -- COMMAND ----------
@@ -121,9 +126,9 @@ show grants on share delta_sharing_lebara
 
 -- MAGIC %python
 -- MAGIC profile="dbfs:/sharing/config.share"
--- MAGIC shareName="delta_sharing_studio"
--- MAGIC schemaName="boat"
--- MAGIC tableName="titanic"
+-- MAGIC shareName="delta_sharing"
+-- MAGIC schemaName="ingestion"
+-- MAGIC tableName="mutual_fund"
 -- MAGIC 
 -- MAGIC tblurl=f"{profile}#{shareName}.{schemaName}.{tableName}"
 -- MAGIC df=delta_sharing.load_as_spark(tblurl)
