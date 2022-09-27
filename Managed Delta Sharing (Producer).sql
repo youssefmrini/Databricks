@@ -15,15 +15,15 @@ DESCRIBE SHARE boat_share;
 
 use catalog disaster;
 use boat;
+--CREATE TABLE   disaster.boat.titanics AS SELECT * FROM hive_metastore.default.titanic;
 
 -- COMMAND ----------
 
-CREATE TABLE disaster.boat.titanics
-AS SELECT * FROM hive_metastore.default.titanic;
+describe history disaster.boat.titanics 
 
 -- COMMAND ----------
 
-ALTER SHARE boat_share ADD TABLE disaster.boat.titanics;
+ALTER SHARE boat_share ADD TABLE disaster.boat.titanics
 
 -- COMMAND ----------
 
@@ -31,12 +31,14 @@ SHOW ALL IN SHARE boat_share;
 
 -- COMMAND ----------
 
-CREATE RECIPIENT IF NOT EXISTS youssef_boat USING ID 'aws:us-west-2:171cd945-ec1f-47c4-ad88-a37afd9c0f4a';
+CREATE RECIPIENT IF NOT EXISTS studio USING ID 'aws:us-west-2:171cd945-ec1f-47c4-ad88-a37afd9c0f4a';
 
 -- COMMAND ----------
 
-GRANT SELECT ON SHARE boat_share TO RECIPIENT youssef_boat;
+GRANT SELECT ON SHARE boat_share TO RECIPIENT studio;
 
 -- COMMAND ----------
 
-ALTER SHARE boat_share ADD TABLE deltasharing.airlinedata.lookupcodes;
+REVOKE SELECT
+ON SHARE boat_share
+FROM RECIPIENT studio;

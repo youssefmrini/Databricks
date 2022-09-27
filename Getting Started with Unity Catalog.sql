@@ -55,6 +55,11 @@ AS SELECT * FROM hive_metastore.default.titanic_parquet;
 
 -- COMMAND ----------
 
+CREATE TABLE demo_uc.boat.titanic_v3 using parquet
+AS SELECT * FROM hive_metastore.default.titanic_parquet;
+
+-- COMMAND ----------
+
 describe extended demo_uc.boat.titanic_v1
 
 -- COMMAND ----------
@@ -165,13 +170,17 @@ group by Survived,Sex,Pclass
 
 -- COMMAND ----------
 
+describe extended demo_uc.boat.titanic_ext 
+
+-- COMMAND ----------
+
 -- MAGIC %python
 -- MAGIC 
 -- MAGIC dbutils.fs.rm("abfss://songkun-uc-external-1@songkunucexternal.dfs.core.windows.net/parquet",recurse=True)
 
 -- COMMAND ----------
 
-drop table demo_uc.boat.titanic_ext_parquet ;
+--drop table demo_uc.boat.titanic_ext_parquet ;
 create table  demo_uc.boat.titanic_ext_parquet 
 using parquet location "abfss://songkun-uc-external-1@songkunucexternal.dfs.core.windows.net/parquet" 
 as 
@@ -179,12 +188,12 @@ select count(PassengerId) as Nbr, Sex,Pclass,
        case when Pclass=1 or Pclass=2 then "Rich" 
        else "Poor" 
        end as class
-from demo_uc.boat.titanic_v2 
+from demo_uc.boat.titanic_v2
 group by Survived,Sex,Pclass
 
 -- COMMAND ----------
 
-describe extended demo_uc.boat.titanic_ext 
+describe extended demo_uc.boat.titanic_ext_parquet 
 
 -- COMMAND ----------
 
@@ -210,7 +219,7 @@ select * from titanic_ext
 
 -- MAGIC %sql
 -- MAGIC 
--- MAGIC drop view demo_uc.boat.titanic_redacted;
+-- MAGIC --drop view demo_uc.boat.titanic_redacted;
 -- MAGIC --drop view demo_uc.boat.titanic_redacted_row;
 -- MAGIC --drop view demo_uc.boat.titanic_redacted_row_v2;
 
