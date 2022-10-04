@@ -55,12 +55,12 @@ AS SELECT * FROM hive_metastore.default.titanic_parquet;
 
 -- COMMAND ----------
 
-CREATE TABLE demo_uc.boat.titanic_v3 using parquet
-AS SELECT * FROM hive_metastore.default.titanic_parquet;
+describe extended demo_uc.boat.titanic_v1
 
 -- COMMAND ----------
 
-describe extended demo_uc.boat.titanic_v1
+CREATE TABLE demo_uc.boat.titanic_v3 using parquet
+AS SELECT * FROM hive_metastore.default.titanic_parquet;
 
 -- COMMAND ----------
 
