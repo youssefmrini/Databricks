@@ -82,10 +82,10 @@ show grant on demo_uc.boat.titanic_v1
 
 -- COMMAND ----------
 
-grant usage, create on catalog demo_uc to `youssef.mrini@databricks.com`;
-grant usage, create on schema boat to  `youssef.mrini@databricks.com`;
-grant select, modify on table titanic_v2 to  `youssef.mrini@databricks.com`;
-grant select, modify on table titanic_v1 to  `youssef.mrini@databricks.com`;
+grant all privileges on catalog demo_uc to `youssef.mrini@databricks.com`;
+--grant usage, create on schema boat to  `youssef.mrini@databricks.com`;
+--grant select, modify on table titanic_v2 to  `youssef.mrini@databricks.com`;
+--grant select, modify on table titanic_v1 to  `youssef.mrini@databricks.com`;
 
 -- COMMAND ----------
 
@@ -141,7 +141,7 @@ describe storage credential `songkun-uc-external-1`
 
 -- COMMAND ----------
 
-GRANT CREATE TABLE, read files, write files ON external LOCATION `songkun-uc-external-1` TO `youssef.mrini@databricks.com`;
+--GRANT CREATE TABLE, read files, write files ON external LOCATION `songkun-uc-external-1` TO `youssef.mrini@databricks.com`;
 SHOW GRANTS `youssef.mrini@databricks.com` ON external LOCATION `songkun-uc-external-1`;
 
 -- COMMAND ----------
@@ -152,7 +152,7 @@ SHOW GRANTS `youssef.mrini@databricks.com` ON external LOCATION `songkun-uc-exte
 
 -- COMMAND ----------
 
-GRANT CREATE TABLE, read files, write files ON STORAGE CREDENTIAL `songkun-uc-external-1` TO `youssef.mrini@databricks.com`;
+--grant CREATE TABLE, read files, write files ON STORAGE CREDENTIAL `songkun-uc-external-1` TO `youssef.mrini@databricks.com`;
 SHOW GRANTS `youssef.mrini@databricks.com` ON STORAGE CREDENTIAL `songkun-uc-external-1`;
 
 
