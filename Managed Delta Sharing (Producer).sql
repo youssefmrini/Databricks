@@ -32,6 +32,10 @@ WITH CHANGE DATA FEED;
 
 -- COMMAND ----------
 
+show tables
+
+-- COMMAND ----------
+
 -- MAGIC %md
 -- MAGIC 
 -- MAGIC <h2> Removing a table from a share </H2>
@@ -51,7 +55,8 @@ ALTER SHARE finance REMOVE TABLE demo_deltasharing.ingestion.mutual_fund;
 
 ALTER SHARE finance
 ADD TABLE mutual_fund
-PARTITION (year = "2020", month = "8");
+PARTITION (year = "2020", month = "8"),
+ (year = "2020", month = "9");
 
 -- COMMAND ----------
 

@@ -3,15 +3,6 @@ SET spark.databricks.delta.formatCheck.enabled=false
 
 -- COMMAND ----------
 
-create catalog demo_deltasharing;
-use catalog demo_deltasharing;
-create database ingestion;
-use ingestion;
-
---create table mutualfund using delta as select * from csv."abfss://songkun-uc-external-2@songkunucexternal.dfs.core.windows.net/MutualFund.csv" 
-
--- COMMAND ----------
-
 -- MAGIC 
 -- MAGIC %python
 -- MAGIC df=spark.read.format("csv").option("header","true").option("inferSchema","true").load("abfss://songkun-uc-external-2@songkunucexternal.dfs.core.windows.net/MutualFund.csv")
@@ -19,9 +10,24 @@ use ingestion;
 
 -- COMMAND ----------
 
+--create catalog demo_deltasharing;
+use catalog demo_deltasharing;
+--create database ingestion;
+use ingestion;
+
+--create table mutualfund using delta as select * from csv."abfss://songkun-uc-external-2@songkunucexternal.dfs.core.windows.net/MutualFund.csv" 
+
+-- COMMAND ----------
+
 -- MAGIC %python
 -- MAGIC df=spark.sql("select quarter(price_date) as quarter, year(price_date) as year, month(price_date) as month, to_date(price_date) as date, fund_symbol, nav_per_share from mutualfund")
--- MAGIC df.write.partitionBy("year","quarter","month").saveAsTable("mutual_fund")
+-- MAGIC df.write.mode("overwrite").partitionBy("year","quarter","month").saveAsTable("mutual_fund")
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC df=spark.sql("select quarter(price_date) as quarter, year(price_date) as year, month(price_date) as month, to_date(price_date) as date, fund_symbol, nav_per_share from mutualfund")
+-- MAGIC df.write.mode("overwrite").saveAsTable("mutual_fund_part")
 
 -- COMMAND ----------
 

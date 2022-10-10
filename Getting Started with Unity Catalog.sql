@@ -1,5 +1,17 @@
 -- Databricks notebook source
 -- MAGIC %md 
+-- MAGIC <h2> Grant permissions over the Catalog </H2>
+-- MAGIC 
+-- MAGIC Metastore privileges => CREATE CATALOG, CREATE EXTERNAL LOCATION, CREATE RECIPIENT, CREATE SHARE
+
+-- COMMAND ----------
+
+grant create catalog on metastore to `lara.rachidi@databricks.com`
+
+
+-- COMMAND ----------
+
+-- MAGIC %md 
 -- MAGIC 
 -- MAGIC <h2> Clean the demo </h2>
 
@@ -83,6 +95,7 @@ show grant on demo_uc.boat.titanic_v1
 -- COMMAND ----------
 
 grant all privileges on catalog demo_uc to `youssef.mrini@databricks.com`;
+--grant usage, create on catalog demo_uc to `youssef.mrini@databricks.com`;
 --grant usage, create on schema boat to  `youssef.mrini@databricks.com`;
 --grant select, modify on table titanic_v2 to  `youssef.mrini@databricks.com`;
 --grant select, modify on table titanic_v1 to  `youssef.mrini@databricks.com`;
@@ -261,7 +274,7 @@ select * from demo_uc.boat.titanic_redacted_row_v2
 -- COMMAND ----------
 
 use catalog demo_uc;
-drop database features cascade;
+--drop database features cascade;
 
 -- COMMAND ----------
 

@@ -14,8 +14,9 @@
 
 -- COMMAND ----------
 
-drop share Delta_sharing;
-drop recipient consumers;
+--drop share Delta_sharing;
+
+--drop recipient consumers;
 
 -- COMMAND ----------
 
@@ -40,13 +41,7 @@ show all in share Delta_sharing
 
 -- COMMAND ----------
 
-alter share Delta_sharing add table demo_deltasharing.ingestion.mutual_fund
-
--- COMMAND ----------
-
-alter share Delta_sharing_studio add table demo_uc.features.pets;
-alter share Delta_sharing_studio add table  demo_uc.features.persons;
-
+alter share Delta_sharing add table demo_youssef.boat.titanic_delta
 
 -- COMMAND ----------
 
@@ -63,7 +58,7 @@ describe recipient consumers
 
 -- COMMAND ----------
 
-show grants on share delta_sharing
+show grants on share Delta_sharing
 
 -- COMMAND ----------
 
@@ -126,7 +121,7 @@ show grants on share delta_sharing
 
 -- MAGIC %python
 -- MAGIC profile="dbfs:/sharing/config.share"
--- MAGIC shareName="delta_sharing"
+-- MAGIC shareName="delta_sharing_asklocala"
 -- MAGIC schemaName="ingestion"
 -- MAGIC tableName="mutual_fund"
 -- MAGIC 
