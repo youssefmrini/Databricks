@@ -3,6 +3,14 @@ SET spark.databricks.delta.formatCheck.enabled=false
 
 -- COMMAND ----------
 
+use catalog demo_deltasharing;
+create database ingestion;
+use ingestion;
+
+drop table mutualfund;
+
+-- COMMAND ----------
+
 -- MAGIC 
 -- MAGIC %python
 -- MAGIC df=spark.read.format("csv").option("header","true").option("inferSchema","true").load("abfss://songkun-uc-external-2@songkunucexternal.dfs.core.windows.net/MutualFund.csv")
@@ -11,11 +19,16 @@ SET spark.databricks.delta.formatCheck.enabled=false
 -- COMMAND ----------
 
 --create catalog demo_deltasharing;
-use catalog demo_deltasharing;
+--use catalog demo_deltasharing;
 --create database ingestion;
-use ingestion;
+--use ingestion;
 
---create table mutualfund using delta as select * from csv."abfss://songkun-uc-external-2@songkunucexternal.dfs.core.windows.net/MutualFund.csv" 
+--create table mutualfund using delta as select * from csv.`abfss://songkun-uc-external-2@songkunucexternal.dfs.core.windows.net/MutualFund.csv`
+
+
+-- COMMAND ----------
+
+select * from mutualfund;
 
 -- COMMAND ----------
 
@@ -62,3 +75,7 @@ select * from mutual_fund
 merge into mutual_fund using updates 
 on mutual_fund.date=updates.date and mutual_fund.fund_symbol=updates.fund_symbol
 WHEN MATCHED THEN UPDATE SET *
+
+-- COMMAND ----------
+
+describe history mutual_fund

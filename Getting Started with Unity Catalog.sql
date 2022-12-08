@@ -6,11 +6,6 @@
 
 -- COMMAND ----------
 
-grant create catalog on metastore to `lara.rachidi@databricks.com`
-
-
--- COMMAND ----------
-
 -- MAGIC %md 
 -- MAGIC 
 -- MAGIC <h2> Clean the demo </h2>

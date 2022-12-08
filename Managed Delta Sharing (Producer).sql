@@ -1,6 +1,10 @@
 -- Databricks notebook source
+select current_metastore()
+
+-- COMMAND ----------
+
 drop share finance;
-drop recipient consumer;
+--drop recipient consumer;
 
 -- COMMAND ----------
 
@@ -15,7 +19,7 @@ DESCRIBE SHARE finance;
 
 use catalog demo_deltasharing;
 use ingestion;
---CREATE TABLE   disaster.boat.titanics AS SELECT * FROM hive_metastore.default.titanic;
+
 
 -- COMMAND ----------
 
@@ -70,6 +74,10 @@ SHOW ALL IN SHARE finance;
 -- COMMAND ----------
 
 CREATE RECIPIENT IF NOT EXISTS consumer USING ID 'aws:us-west-2:171cd945-ec1f-47c4-ad88-a37afd9c0f4a';
+
+-- COMMAND ----------
+
+show providers
 
 -- COMMAND ----------
 

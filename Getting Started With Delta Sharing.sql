@@ -14,9 +14,9 @@
 
 -- COMMAND ----------
 
---drop share Delta_sharing;
+drop share Delta_sharing;
 
---drop recipient consumers;
+drop recipient consumers;
 
 -- COMMAND ----------
 
@@ -25,7 +25,7 @@
 
 -- COMMAND ----------
 
-create share if not exists Delta_sharing comment " This is my first share"
+create share if not exists Delta_sharing comment " This is my first share Kaiko"
 
 -- COMMAND ----------
 
@@ -41,7 +41,7 @@ show all in share Delta_sharing
 
 -- COMMAND ----------
 
-alter share Delta_sharing add table demo_youssef.boat.titanic_delta
+alter share Delta_sharing add table demo.databricks_paris.colleagues --demo_youssef.boat.titanic_delta
 
 -- COMMAND ----------
 
@@ -121,9 +121,9 @@ show grants on share delta_sharing
 
 -- MAGIC %python
 -- MAGIC profile="dbfs:/sharing/config.share"
--- MAGIC shareName="delta_sharing_asklocala"
--- MAGIC schemaName="ingestion"
--- MAGIC tableName="mutual_fund"
+-- MAGIC shareName="delta_sharing"
+-- MAGIC schemaName="boat"
+-- MAGIC tableName="titanic_delta"
 -- MAGIC 
 -- MAGIC tblurl=f"{profile}#{shareName}.{schemaName}.{tableName}"
 -- MAGIC df=delta_sharing.load_as_spark(tblurl)

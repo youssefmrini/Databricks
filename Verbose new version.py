@@ -13,7 +13,7 @@
 # MAGIC COPY INTO verbose.stats.notebook 
 # MAGIC FROM 'abfss://insights-logs-notebook@songkunucexternal.dfs.core.windows.net/resourceId=/SUBSCRIPTIONS/3F2E4D32-8E8D-46D6-82BC-5BB8D962328B/RESOURCEGROUPS/SONGKUN-DEMO-RG-DO-NOT-DELETE/PROVIDERS/MICROSOFT.DATABRICKS/WORKSPACES/SONGKUN-DEMO-UC-DELTASHARING/y=*/m=*/d=*/h=*/m=*/'
 # MAGIC FILEFORMAT = JSON
-# MAGIC COPY_OPTIONS ( 'allowBackslashEscapingAnyCharacter'='true','badRecordsPath'='true', 'mergeSchema'='true');
+# MAGIC COPY_OPTIONS ( 'mergeSchema'='true');
 
 # COMMAND ----------
 
@@ -197,7 +197,7 @@ display(fin)
 
 # MAGIC %sql
 # MAGIC use stats;
-# MAGIC --create table verbose.stats.unitycatalog using delta;
+# MAGIC create table verbose.stats.unitycatalog using delta;
 # MAGIC COPY INTO verbose.stats.unitycatalog 
 # MAGIC FROM 'abfss://insights-logs-unitycatalog@songkunucexternal.dfs.core.windows.net/resourceId=/SUBSCRIPTIONS/3F2E4D32-8E8D-46D6-82BC-5BB8D962328B/RESOURCEGROUPS/SONGKUN-DEMO-RG-DO-NOT-DELETE/PROVIDERS/MICROSOFT.DATABRICKS/WORKSPACES/SONGKUN-DEMO-UC-DELTASHARING/y=*/m=*/d=*/h=*/m=*/'
 # MAGIC FILEFORMAT = JSON
@@ -281,7 +281,7 @@ fin.write.mode("overwrite").option("mergeSchema", "true").saveAsTable("verbose.s
 
 # MAGIC %sql
 # MAGIC 
-# MAGIC --create table verbose.stats.workspace using delta;
+# MAGIC create table verbose.stats.workspace using delta;
 # MAGIC COPY INTO verbose.stats.workspace 
 # MAGIC FROM 'abfss://insights-logs-workspace@songkunucexternal.dfs.core.windows.net/resourceId=/SUBSCRIPTIONS/3F2E4D32-8E8D-46D6-82BC-5BB8D962328B/RESOURCEGROUPS/SONGKUN-DEMO-RG-DO-NOT-DELETE/PROVIDERS/MICROSOFT.DATABRICKS/WORKSPACES/SONGKUN-DEMO-UC-DELTASHARING/y=*/m=*/d=*/h=*/m=*/'
 # MAGIC FILEFORMAT = JSON
@@ -334,6 +334,12 @@ conv2=conv1.select(regexp_replace(col("date1"),'Z','').alias("datefinal"),"*")
 fin=conv2.withColumn("date",to_timestamp("datefinal","yyyy-MM-dd HH:mm:ss")).withColumn("month",month("datefinal")).withColumn("year",year("datefinal")).withColumn("minute",minute("datefinal")).withColumn("hour",hour("datefinal")).withColumn("day",dayofmonth("datefinal")).drop("date1","time").drop("date","identity_new")
 fin.write.mode("overwrite").option("mergeSchema", "true").saveAsTable("verbose.stats.workspaces")
 
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC 
+# MAGIC select distinct actionName from verbose.stats.workspaces
 
 # COMMAND ----------
 
@@ -391,4 +397,4 @@ fin.write.mode("overwrite").option("mergeSchema", "true").saveAsTable("verbose.s
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC select * from verbose.stats.accounts where actionName="add"
+# MAGIC select * from verbose.stats.workspaces 
