@@ -128,3 +128,12 @@ show grants on share delta_sharing
 -- MAGIC tblurl=f"{profile}#{shareName}.{schemaName}.{tableName}"
 -- MAGIC df=delta_sharing.load_as_spark(tblurl)
 -- MAGIC display(df)
+
+-- COMMAND ----------
+
+-- MAGIC %scala
+-- MAGIC val tablePath = "<profile-file-path>#<share-name>.<schema-name>.<table-name>"
+-- MAGIC val df = spark.readStream.format("deltaSharing")
+-- MAGIC   .option("startingVersion", "1")
+-- MAGIC   .option("ignoreChanges", "true")
+-- MAGIC   .load(tablePath)

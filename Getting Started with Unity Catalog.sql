@@ -13,7 +13,7 @@
 -- COMMAND ----------
 
 Drop catalog demo_uc cascade;
---drop catalog demo_uc2
+
 
 -- COMMAND ----------
 
@@ -129,7 +129,7 @@ show external locations
 
 -- COMMAND ----------
 
-describe external location `songkun-uc-external-1`
+describe external location `songkun-uc-ext-location1`
 
 
 -- COMMAND ----------
@@ -138,7 +138,7 @@ show storage credentials;
 
 -- COMMAND ----------
 
-describe storage credential `songkun-uc-external-1`
+describe storage credential `uc-external-credential-1`
 
 
 -- COMMAND ----------
@@ -150,7 +150,7 @@ describe storage credential `songkun-uc-external-1`
 -- COMMAND ----------
 
 --GRANT CREATE TABLE, read files, write files ON external LOCATION `songkun-uc-external-1` TO `youssef.mrini@databricks.com`;
-SHOW GRANTS `youssef.mrini@databricks.com` ON external LOCATION `songkun-uc-external-1`;
+SHOW GRANTS `youssef.mrini@databricks.com` ON external LOCATION `uc-external-credential-1`;
 
 -- COMMAND ----------
 
@@ -161,7 +161,7 @@ SHOW GRANTS `youssef.mrini@databricks.com` ON external LOCATION `songkun-uc-exte
 -- COMMAND ----------
 
 --grant CREATE TABLE, read files, write files ON STORAGE CREDENTIAL `songkun-uc-external-1` TO `youssef.mrini@databricks.com`;
-SHOW GRANTS `youssef.mrini@databricks.com` ON STORAGE CREDENTIAL `songkun-uc-external-1`;
+SHOW GRANTS `youssef.mrini@databricks.com` ON STORAGE CREDENTIAL `uc-external-credential-1`;
 
 
 -- COMMAND ----------

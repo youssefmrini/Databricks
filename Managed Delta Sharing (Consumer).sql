@@ -34,4 +34,12 @@ show tables;
 
 -- COMMAND ----------
 
+val tablePath = "<profile-file-path>#<share-name>.<schema-name>.<table-name>"
+val df = spark.readStream.format("deltaSharing")
+  .option("startingVersion", "1")
+  .option("ignoreChanges", "true")
+  .load(tablePath)
+
+-- COMMAND ----------
+
 describe extended external_share.boat.titanic
