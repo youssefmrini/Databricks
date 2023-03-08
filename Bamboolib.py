@@ -8,3 +8,7 @@ import bamboolib as bam
 # COMMAND ----------
 
 bam
+
+# COMMAND ----------
+
+print
