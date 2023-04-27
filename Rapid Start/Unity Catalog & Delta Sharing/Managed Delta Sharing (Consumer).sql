@@ -28,7 +28,7 @@ show tables;
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC 
+-- MAGIC
 -- MAGIC df=spark.table("external_share.boat.titanic")
 -- MAGIC display(df)
 

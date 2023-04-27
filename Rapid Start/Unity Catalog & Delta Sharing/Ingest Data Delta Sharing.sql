@@ -11,7 +11,7 @@ drop table mutualfund;
 
 -- COMMAND ----------
 
--- MAGIC 
+-- MAGIC
 -- MAGIC %python
 -- MAGIC df=spark.read.format("csv").option("header","true").option("inferSchema","true").load("abfss://songkun-uc-external-2@songkunucexternal.dfs.core.windows.net/MutualFund.csv")
 -- MAGIC df.write.saveAsTable("mutualfund")
@@ -58,14 +58,14 @@ select * from mutual_fund
 
 -- MAGIC %python
 -- MAGIC from pyspark.sql.types import StructType,StructField, StringType, IntegerType, DateType, DoubleType
--- MAGIC 
--- MAGIC 
+-- MAGIC
+-- MAGIC
 -- MAGIC data2 = [(2,1974,8,"1974-08-01","ACGIX",5.62),
 -- MAGIC     (2,1974,8,"1974-08-02","ACGIX",5.0),
 -- MAGIC     (3,1974,9,"1974-08-03","ACGIX",4000.0),
 -- MAGIC     (3,1974,10,"1974-08-04","ACGIX",4000.0),
 -- MAGIC     (4,1974,8,"1974-08-05","ACGIX",1.0)]
--- MAGIC 
+-- MAGIC
 -- MAGIC df = spark.createDataFrame(data2,["quarter","year","month","date","fund_symbol","nav_per_share"])
 -- MAGIC df.createOrReplaceTempView("updates")
 -- MAGIC display(df)

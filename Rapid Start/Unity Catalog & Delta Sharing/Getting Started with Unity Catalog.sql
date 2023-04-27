@@ -1,13 +1,13 @@
 -- Databricks notebook source
 -- MAGIC %md 
 -- MAGIC <h2> Grant permissions over the Catalog </H2>
--- MAGIC 
+-- MAGIC
 -- MAGIC Metastore privileges => CREATE CATALOG, CREATE EXTERNAL LOCATION, CREATE RECIPIENT, CREATE SHARE
 
 -- COMMAND ----------
 
 -- MAGIC %md 
--- MAGIC 
+-- MAGIC
 -- MAGIC <h2> Clean the demo </h2>
 
 -- COMMAND ----------
@@ -18,7 +18,7 @@ Drop catalog demo_uc cascade;
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC <h2> Create a catalog </H2>
 
 -- COMMAND ----------
@@ -40,7 +40,7 @@ use boat;
 
 -- MAGIC %md 
 -- MAGIC <h2> Convert a Hive Metastore Table (Managed Table) to Unity Catalog </h2>
--- MAGIC 
+-- MAGIC
 -- MAGIC <H4> Managed Tables support Only Delta Tables </H4> 
 
 -- COMMAND ----------
@@ -110,7 +110,7 @@ show grant on titanic_v1
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC <H2> Query the table </H2>
 
 -- COMMAND ----------
@@ -120,7 +120,7 @@ select * from titanic_v1
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC <H2> Create an external Delta Table </H2>
 
 -- COMMAND ----------
@@ -144,7 +144,7 @@ describe storage credential `uc-external-credential-1`
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC <h4> Grant and manage permissions for  External location </H4>
 
 -- COMMAND ----------
@@ -155,7 +155,7 @@ SHOW GRANTS `youssef.mrini@databricks.com` ON external LOCATION `uc-external-cre
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC <h4> Grant and manage permissions for Storage Credential </H4>
 
 -- COMMAND ----------
@@ -183,7 +183,7 @@ describe extended demo_uc.boat.titanic_ext
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC 
+-- MAGIC
 -- MAGIC dbutils.fs.rm("abfss://songkun-uc-external-1@songkunucexternal.dfs.core.windows.net/parquet",recurse=True)
 
 -- COMMAND ----------
@@ -220,13 +220,13 @@ select * from titanic_ext
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC <H2> View </H2>
 
 -- COMMAND ----------
 
 -- MAGIC %sql
--- MAGIC 
+-- MAGIC
 -- MAGIC --drop view demo_uc.boat.titanic_redacted;
 -- MAGIC --drop view demo_uc.boat.titanic_redacted_row;
 -- MAGIC --drop view demo_uc.boat.titanic_redacted_row_v2;

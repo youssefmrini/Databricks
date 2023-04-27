@@ -1,14 +1,14 @@
 # Databricks notebook source
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC --create catalog verbose;
 # MAGIC use catalog verbose;
-# MAGIC --create database stats;
+# MAGIC create database stats;
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC --create table verbose.stats.notebook using delta;
 # MAGIC COPY INTO verbose.stats.notebook 
 # MAGIC FROM 'abfss://insights-logs-notebook@songkunucexternal.dfs.core.windows.net/resourceId=/SUBSCRIPTIONS/3F2E4D32-8E8D-46D6-82BC-5BB8D962328B/RESOURCEGROUPS/SONGKUN-DEMO-RG-DO-NOT-DELETE/PROVIDERS/MICROSOFT.DATABRICKS/WORKSPACES/SONGKUN-DEMO-UC-DELTASHARING/y=*/m=*/d=*/h=*/m=*/'
@@ -60,13 +60,13 @@ fin.write.mode("append").option("mergeSchema", "true").saveAsTable("verbose.stat
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC select * from verbose.stats.notebooklogs
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC <h2> Run Command </H2>
 
 # COMMAND ----------
@@ -97,7 +97,7 @@ fin.write.mode("append").option("mergeSchema", "true").saveAsTable("verbose.stat
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC <h2> Detach Notebook </H2>
 
 # COMMAND ----------
@@ -117,16 +117,16 @@ spark.conf.get("spark.databricks.delta.formatCheck.enabled","false")
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC use catalog verbose;
 # MAGIC use stats;
 
 # COMMAND ----------
 
-# MAGIC 
+# MAGIC
 # MAGIC %sql
-# MAGIC 
-# MAGIC 
+# MAGIC
+# MAGIC
 # MAGIC create table verbose.stats.clusters using delta;
 # MAGIC COPY INTO verbose.stats.clusters 
 # MAGIC FROM 'abfss://insights-logs-clusters@songkunucexternal.dfs.core.windows.net/resourceId=/SUBSCRIPTIONS/3F2E4D32-8E8D-46D6-82BC-5BB8D962328B/RESOURCEGROUPS/SONGKUN-DEMO-RG-DO-NOT-DELETE/PROVIDERS/MICROSOFT.DATABRICKS/WORKSPACES/SONGKUN-DEMO-UC-DELTASHARING/y=*/m=*/d=*/h=*/m=*/'
@@ -136,7 +136,7 @@ spark.conf.get("spark.databricks.delta.formatCheck.enabled","false")
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC select *,properties.* from verbose.stats.clusters
 
 # COMMAND ----------
@@ -280,7 +280,7 @@ fin.write.mode("overwrite").option("mergeSchema", "true").saveAsTable("verbose.s
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC create table verbose.stats.workspace using delta;
 # MAGIC COPY INTO verbose.stats.workspace 
 # MAGIC FROM 'abfss://insights-logs-workspace@songkunucexternal.dfs.core.windows.net/resourceId=/SUBSCRIPTIONS/3F2E4D32-8E8D-46D6-82BC-5BB8D962328B/RESOURCEGROUPS/SONGKUN-DEMO-RG-DO-NOT-DELETE/PROVIDERS/MICROSOFT.DATABRICKS/WORKSPACES/SONGKUN-DEMO-UC-DELTASHARING/y=*/m=*/d=*/h=*/m=*/'
@@ -338,7 +338,7 @@ fin.write.mode("overwrite").option("mergeSchema", "true").saveAsTable("verbose.s
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC select distinct actionName from verbose.stats.workspaces
 
 # COMMAND ----------

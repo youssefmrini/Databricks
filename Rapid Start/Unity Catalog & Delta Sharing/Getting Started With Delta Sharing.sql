@@ -1,15 +1,15 @@
 -- Databricks notebook source
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC # Delta Sharing - Securely share Data with external team / partners
--- MAGIC 
+-- MAGIC
 -- MAGIC * Share existing, live data in data lakes / lakehouses (no need to copy it out)
 -- MAGIC * Support a wide range of clients by using existing, open data formats (pandas, spark, Tableau etc)
 -- MAGIC * Strong security, auditing and governance
 -- MAGIC * Efficiently scale to massive datasets
--- MAGIC 
+-- MAGIC
 -- MAGIC <img src="https://github.com/QuentinAmbard/databricks-demo/raw/main/delta-sharing/resources/images/delta-sharing-flow.png" width="900px"/>
--- MAGIC 
+-- MAGIC
 -- MAGIC <img width="1px" src="https://www.google-analytics.com/collect?v=1&gtm=GTM-NKQ8TT7&tid=UA-163989034-1&cid=555&aip=1&t=event&ec=field_demos&ea=display&dp=%2F42_field_demos%2Ffeatures%2Fdelta_sharing%2Fgrant&dt=FEATURE_DELTA_SHARING">
 
 -- COMMAND ----------
@@ -107,7 +107,7 @@ show grants on share delta_sharing
 
 -- MAGIC %python
 -- MAGIC import delta_sharing
--- MAGIC 
+-- MAGIC
 -- MAGIC profile="/dbfs/sharing/config.share"
 -- MAGIC client=delta_sharing.SharingClient(profile)
 -- MAGIC client
@@ -124,7 +124,7 @@ show grants on share delta_sharing
 -- MAGIC shareName="delta_sharing"
 -- MAGIC schemaName="boat"
 -- MAGIC tableName="titanic_delta"
--- MAGIC 
+-- MAGIC
 -- MAGIC tblurl=f"{profile}#{shareName}.{schemaName}.{tableName}"
 -- MAGIC df=delta_sharing.load_as_spark(tblurl)
 -- MAGIC display(df)
