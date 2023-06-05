@@ -23,8 +23,8 @@ Drop catalog demo_uc cascade;
 
 -- COMMAND ----------
 
-create catalog demo_uc;
-use catalog demo_uc;
+create catalog demo_uc_youssef;
+use catalog demo_uc_youssef;
 
 -- COMMAND ----------
 
@@ -33,8 +33,8 @@ use catalog demo_uc;
 
 -- COMMAND ----------
 
-create database boat;
-use boat;
+create schema boat;
+use schema boat;
 
 -- COMMAND ----------
 
@@ -52,8 +52,8 @@ use boat;
 
 --SQL
 
-CREATE TABLE demo_uc.boat.titanic_v1
-AS SELECT * FROM hive_metastore.default.titanic_parquet;
+CREATE TABLE demo_uc_youssef.boat.titanic_v1
+AS SELECT * FROM hive_metastore.boat.titanic_parquet;
 
 --%python
 --df = spark.table("hive_metastore.default.titanic")
@@ -62,12 +62,12 @@ AS SELECT * FROM hive_metastore.default.titanic_parquet;
 
 -- COMMAND ----------
 
-describe extended demo_uc.boat.titanic_v1
+describe extended demo_uc_youssef.boat.titanic_v1
 
 -- COMMAND ----------
 
-CREATE TABLE demo_uc.boat.titanic_v3 using parquet
-AS SELECT * FROM hive_metastore.default.titanic_parquet;
+CREATE TABLE demo_uc_youssef.boat.titanic_v3 using parquet
+AS SELECT * FROM hive_metastore.boat.titanic_parquet;
 
 -- COMMAND ----------
 
@@ -76,11 +76,11 @@ AS SELECT * FROM hive_metastore.default.titanic_parquet;
 
 -- COMMAND ----------
 
-CREATE TABLE demo_uc.boat.titanic_v2 deep clone hive_metastore.default.titanic;
+CREATE TABLE demo_uc_youssef.boat.titanic_v2 deep clone hive_metastore.default.titanic;
 
 -- COMMAND ----------
 
-show grant on demo_uc.boat.titanic_v1
+show grant on demo_uc_youssef.boat.titanic_v1
 
 -- COMMAND ----------
 
@@ -89,15 +89,15 @@ show grant on demo_uc.boat.titanic_v1
 
 -- COMMAND ----------
 
-grant all privileges on catalog demo_uc to `youssef.mrini@databricks.com`;
---grant usage, create on catalog demo_uc to `youssef.mrini@databricks.com`;
+grant all privileges on catalog demo_uc_youssef to `youssef.mrini@databricks.com`;
+--grant usage, create on catalog demo_uc_youssef to `youssef.mrini@databricks.com`;
 --grant usage, create on schema boat to  `youssef.mrini@databricks.com`;
 --grant select, modify on table titanic_v2 to  `youssef.mrini@databricks.com`;
 --grant select, modify on table titanic_v1 to  `youssef.mrini@databricks.com`;
 
 -- COMMAND ----------
 
-show grant on catalog demo_uc
+show grant on catalog demo_uc_youssef
 
 -- COMMAND ----------
 
@@ -129,7 +129,7 @@ show external locations
 
 -- COMMAND ----------
 
-describe external location `songkun-uc-ext-location1`
+--describe external location `songkun-uc-ext-location1`
 
 
 -- COMMAND ----------
@@ -138,7 +138,7 @@ show storage credentials;
 
 -- COMMAND ----------
 
-describe storage credential `uc-external-credential-1`
+--describe storage credential `uc-external-credential-1`
 
 
 -- COMMAND ----------
@@ -161,7 +161,7 @@ SHOW GRANTS `youssef.mrini@databricks.com` ON external LOCATION `uc-external-cre
 -- COMMAND ----------
 
 --grant CREATE TABLE, read files, write files ON STORAGE CREDENTIAL `songkun-uc-external-1` TO `youssef.mrini@databricks.com`;
-SHOW GRANTS `youssef.mrini@databricks.com` ON STORAGE CREDENTIAL `uc-external-credential-1`;
+--SHOW GRANTS `youssef.mrini@databricks.com` ON STORAGE CREDENTIAL `uc-external-credential-1`;
 
 
 -- COMMAND ----------
