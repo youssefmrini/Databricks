@@ -1,20 +1,20 @@
 # Databricks notebook source
 # MAGIC %sql
-# MAGIC 
-# MAGIC 
+# MAGIC
+# MAGIC
 # MAGIC use  catalog analysis;
 # MAGIC create database stats;
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC drop table analysis.stats.notebook
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC create table analysis.stats.notebook using delta;
 # MAGIC COPY INTO analysis.stats.notebook 
 # MAGIC FROM 'abfss://insights-logs-notebook@songkunucexternal.dfs.core.windows.net/resourceId=/SUBSCRIPTIONS/3F2E4D32-8E8D-46D6-82BC-5BB8D962328B/RESOURCEGROUPS/SONGKUN-DEMO-RG-DO-NOT-DELETE/PROVIDERS/MICROSOFT.DATABRICKS/WORKSPACES/SONGKUN-DEMO-UC-DELTASHARING/y=*/m=*/d=*/h=*/m=*/'
@@ -77,7 +77,7 @@ finaltable=trans.withColumn("requestParams_new", from_json(col("requestParams"),
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC use catalog analysis;
 # MAGIC use stats;
 
@@ -101,13 +101,13 @@ fin.write.mode("overwrite").option("overwriteSchema", "true").saveAsTable("analy
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC select * from analysis.stats.notebookslog
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC <h2> Run Command </H2>
 
 # COMMAND ----------
@@ -147,16 +147,16 @@ spark.conf.get("spark.databricks.delta.formatCheck.enabled","false")
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC use catalog analysis;
 # MAGIC use stats;
 
 # COMMAND ----------
 
-# MAGIC 
+# MAGIC
 # MAGIC %sql
-# MAGIC 
-# MAGIC 
+# MAGIC
+# MAGIC
 # MAGIC --create table analysis.stats.cluster using delta;
 # MAGIC COPY INTO analysis.stats.cluster 
 # MAGIC FROM 'abfss://insights-logs-clusters@songkunucexternal.dfs.core.windows.net/resourceId=/SUBSCRIPTIONS/3F2E4D32-8E8D-46D6-82BC-5BB8D962328B/RESOURCEGROUPS/SONGKUN-DEMO-RG-DO-NOT-DELETE/PROVIDERS/MICROSOFT.DATABRICKS/WORKSPACES/SONGKUN-DEMO-UC-DELTASHARING/y=*/m=*/d=*/h=*/m=*/'
@@ -166,7 +166,7 @@ spark.conf.get("spark.databricks.delta.formatCheck.enabled","false")
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC select *,properties.* from analysis.stats.cluster 
 
 # COMMAND ----------
@@ -191,7 +191,7 @@ finaltable.write.mode("overwrite").option("overwriteSchema", "true").saveAsTable
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC select *,properties.* from analysis.stats.clusters
 
 # COMMAND ----------
