@@ -3,15 +3,15 @@ show providers;
 
 -- COMMAND ----------
 
-DESC PROVIDER `databricks-uc-demo`;
+DESC PROVIDER `tde-azure`;
 
 -- COMMAND ----------
 
-show shares in provider `databricks-uc-demo`
+show shares in provider `tde-azure`
 
 -- COMMAND ----------
 
-create catalog external_share using share `databricks-uc-demo`.boat_share
+create catalog external_share using share `tde-azure`.boat
 
 -- COMMAND ----------
 
