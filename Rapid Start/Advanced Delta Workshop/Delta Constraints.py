@@ -1,6 +1,6 @@
 # Databricks notebook source
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC drop table if exists default.people10m_upload;
 # MAGIC CREATE TABLE default.people10m_upload (
 # MAGIC   id INT not null,
@@ -12,17 +12,19 @@
 # MAGIC   ssn STRING,
 # MAGIC   salary INT
 # MAGIC ) USING DELTA
+# MAGIC
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC alter table default.people10m_upload alter column middleName COMMENT "Middle Name"
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC ALTER TABLE default.people10m_upload ADD CONSTRAINT salaries CHECK (salary > 0 and salary<1000000);
+# MAGIC
 
 # COMMAND ----------
 
@@ -36,7 +38,7 @@
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC describe extended default.people10m_upload
 
 # COMMAND ----------

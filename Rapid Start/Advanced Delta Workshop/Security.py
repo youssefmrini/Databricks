@@ -5,13 +5,13 @@
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC show users;
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC use hivedemoyoussef;
 
 # COMMAND ----------
@@ -32,6 +32,7 @@
 # MAGIC PRODUCTLINE, 
 # MAGIC case when is_member("sma-demo2") then SALES else '#####' end as SALES from sales;
 # MAGIC --case when is_member("sma-demo2") then '####'' else SALES end as SALES from sales; 
+# MAGIC
 
 # COMMAND ----------
 
@@ -48,7 +49,7 @@
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC revoke select on sales from `sma-demo2`;
 # MAGIC grant all privileges on sales to `shubham.pachori@databricks.com`;
 
@@ -56,6 +57,7 @@
 
 # MAGIC %md
 # MAGIC Encryption Functions 
+# MAGIC
 
 # COMMAND ----------
 
@@ -65,13 +67,13 @@
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC select cast(aes_decrypt(unbase64('2GUAx5kUR8kbUnhHJfbjn62mllPEBj/zNUtoLX9CguXU'),'abcedfghijklmnop') as string) as hidden
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC create database if not exists crypto;
 # MAGIC use crypto;
 # MAGIC drop table if exists crypto.encryption;
@@ -81,20 +83,21 @@
 # MAGIC encryptionKey String
 # MAGIC )
 # MAGIC using delta;
-# MAGIC 
-# MAGIC 
+# MAGIC
+# MAGIC
 # MAGIC insert into crypto.encryption
 # MAGIC select 'Morocco' Country,'abcdjdjfkfkgfdff' encryptionKey
 # MAGIC union
 # MAGIC select 'France' Country,'abcdjdjfkfkgfdee' encryptionKey
+# MAGIC
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC drop table if exists crypto.contacts;
-# MAGIC 
-# MAGIC 
+# MAGIC
+# MAGIC
 # MAGIC create table crypto.contacts
 # MAGIC (
 # MAGIC Name String,
@@ -102,11 +105,13 @@
 # MAGIC Email String
 # MAGIC )
 # MAGIC using delta;
-# MAGIC 
+# MAGIC
 # MAGIC insert into crypto.contacts
 # MAGIC select 'Youssef' Name,'Morocco' Country, 'youssef.mrini@email.fr' Email
 # MAGIC union
 # MAGIC select 'Mrini' Name,'France' Country ,'youssef.mrini@databricks.com' Email
+# MAGIC
+# MAGIC
 
 # COMMAND ----------
 
@@ -119,6 +124,8 @@
 # MAGIC Email String
 # MAGIC )
 # MAGIC using delta;
+# MAGIC
+# MAGIC
 
 # COMMAND ----------
 
@@ -158,5 +165,5 @@
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC select * from information

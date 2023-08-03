@@ -1,5 +1,5 @@
 # Databricks notebook source
-# MAGIC 
+# MAGIC
 # MAGIC %scala
 # MAGIC def cloudAndRegion = {
 # MAGIC   import com.databricks.backend.common.util.Project
@@ -8,14 +8,14 @@
 # MAGIC   val conf = new DriverConf(ProjectConf.loadLocalConfig(Project.Driver))
 # MAGIC   (conf.cloudProvider.getOrElse("Unknown"), conf.region)
 # MAGIC }
-# MAGIC 
+# MAGIC
 # MAGIC // These keys are read-only so they're okay to have here
 # MAGIC val awsAccessKey = "AKIAJBRYNXGHORDHZB4A"
 # MAGIC val awsSecretKey = "a0BzE1bSegfydr3%2FGE3LSPM6uIV5A4hOUfpH8aFF"
 # MAGIC val awsAuth = s"${awsAccessKey}:${awsSecretKey}"
-# MAGIC 
+# MAGIC
 # MAGIC def getAwsMapping(region:String):(String,Map[String,String]) = {
-# MAGIC 
+# MAGIC
 # MAGIC   val MAPPINGS = Map(
 # MAGIC     "ap-northeast-1" -> (s"s3a://${awsAccessKey}:${awsSecretKey}@databricks-corp-training-ap-northeast-1/common", Map[String,String]()),
 # MAGIC     "ap-northeast-2" -> (s"s3a://${awsAccessKey}:${awsSecretKey}@databricks-corp-training-ap-northeast-2/common", Map[String,String]()),
@@ -34,12 +34,12 @@
 # MAGIC     "us-west-2"      -> (s"s3a://${awsAccessKey}:${awsSecretKey}@databricks-corp-training/common", Map[String,String]()),
 # MAGIC     "_default"       -> (s"s3a://${awsAccessKey}:${awsSecretKey}@databricks-corp-training/common", Map[String,String]())
 # MAGIC   )
-# MAGIC 
+# MAGIC
 # MAGIC   MAPPINGS.getOrElse(region, MAPPINGS("_default"))
 # MAGIC }
-# MAGIC 
+# MAGIC
 # MAGIC def getAzureMapping(region:String):(String,Map[String,String]) = {
-# MAGIC 
+# MAGIC
 # MAGIC   var MAPPINGS = Map(
 # MAGIC     "australiacentral"    -> ("dbtrainaustraliasoutheas",
 # MAGIC                               "?ss=b&sp=rl&sv=2018-03-28&st=2018-04-01T00%3A00%3A00Z&sig=br8%2B5q2ZI9osspeuPtd3haaXngnuWPnZaHKFoLmr370%3D&srt=sco&se=2023-04-01T00%3A00%3A00Z"),
@@ -98,18 +98,18 @@
 # MAGIC     "_default"            -> ("dbtrainwestus2",
 # MAGIC                               "?ss=b&sp=rl&sv=2018-03-28&st=2018-04-01T00%3A00%3A00Z&sig=DD%2BO%2BeIZ35MO8fnh/fk4aqwbne3MAJ9xh9aCIU/HiD4%3D&srt=sco&se=2023-04-01T00%3A00%3A00Z")
 # MAGIC   )
-# MAGIC 
+# MAGIC
 # MAGIC   val (account: String, sasKey: String) = MAPPINGS.getOrElse(region, MAPPINGS("_default"))
-# MAGIC 
+# MAGIC
 # MAGIC   val blob = "training"
 # MAGIC   val source = s"wasbs://$blob@$account.blob.core.windows.net/"
 # MAGIC   val configMap = Map(
 # MAGIC     s"fs.azure.sas.$blob.$account.blob.core.windows.net" -> sasKey
 # MAGIC   )
-# MAGIC 
+# MAGIC
 # MAGIC   (source, configMap)
 # MAGIC }
-# MAGIC 
+# MAGIC
 # MAGIC def retryMount(source: String, mountPoint: String): Unit = {
 # MAGIC   try { 
 # MAGIC     // Mount with IAM roles instead of keys for PVC
@@ -119,7 +119,7 @@
 # MAGIC     case e: Exception => throw new RuntimeException(s"*** ERROR: Unable to mount $mountPoint: ${e.getMessage}", e)
 # MAGIC   }
 # MAGIC }
-# MAGIC 
+# MAGIC
 # MAGIC def mount(source: String, extraConfigs:Map[String,String], mountPoint: String): Unit = {
 # MAGIC   try {
 # MAGIC     dbutils.fs.mount(source, mountPoint, extraConfigs=extraConfigs)
@@ -129,7 +129,7 @@
 # MAGIC     case e: Exception => throw new RuntimeException(s"*** ERROR: Unable to mount $mountPoint: ${e.getMessage}", e)
 # MAGIC   }
 # MAGIC }
-# MAGIC 
+# MAGIC
 # MAGIC def autoMount(fix:Boolean = false, failFast:Boolean = false, mountPoint:String = "/mnt/training"): Unit = {
 # MAGIC   val (cloud, region) = cloudAndRegion
 # MAGIC   spark.conf.set("com.databricks.training.cloud.name", cloud)
@@ -148,21 +148,21 @@
 # MAGIC     displayHTML(s"Mounted course-specific datasets to <b>$mountPoint</b>.")
 # MAGIC   }
 # MAGIC }
-# MAGIC 
+# MAGIC
 # MAGIC def initAzureDataSource(azureRegion:String):(String,Map[String,String]) = {
 # MAGIC   val mapping = getAzureMapping(azureRegion)
 # MAGIC   val (source, config) = mapping
 # MAGIC   val (sasEntity, sasToken) = config.head
-# MAGIC 
+# MAGIC
 # MAGIC   val datasource = "%s\t%s\t%s".format(source, sasEntity, sasToken)
 # MAGIC   spark.conf.set("com.databricks.training.azure.datasource", datasource)
-# MAGIC 
+# MAGIC
 # MAGIC   return mapping
 # MAGIC }
-# MAGIC 
+# MAGIC
 # MAGIC def mountSource(fix:Boolean, failFast:Boolean, mountPoint:String, source:String, extraConfigs:Map[String,String]): String = {
 # MAGIC   val mntSource = source.replace(awsAuth+"@", "")
-# MAGIC 
+# MAGIC
 # MAGIC   if (dbutils.fs.mounts().map(_.mountPoint).contains(mountPoint)) {
 # MAGIC     val mount = dbutils.fs.mounts().filter(_.mountPoint == mountPoint).head
 # MAGIC     if (mount.source == mntSource) {
@@ -193,9 +193,10 @@
 # MAGIC     return s"""Mounted datasets to <b>$mountPoint</b> from <b>$mntSource<b>."""
 # MAGIC   }
 # MAGIC }
-# MAGIC 
+# MAGIC
 # MAGIC def fixMounts(): Unit = {
 # MAGIC   autoMount(true)
 # MAGIC }
-# MAGIC 
+# MAGIC
 # MAGIC autoMount(true)
+# MAGIC

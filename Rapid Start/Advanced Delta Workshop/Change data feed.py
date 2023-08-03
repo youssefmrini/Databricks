@@ -9,7 +9,7 @@
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC drop table default.silverTable;
 # MAGIC drop table default.goldTable;
 
@@ -66,6 +66,7 @@ spark.createDataFrame(data=new_countries, schema = columns).write.format("delta"
 # MAGIC %sql
 # MAGIC -- update a record
 # MAGIC UPDATE silverTable SET NumVaccinated = '11000' WHERE Country = 'USA'
+# MAGIC
 
 # COMMAND ----------
 
@@ -80,9 +81,9 @@ spark.createDataFrame(data=new_countries, schema = columns).write.format("delta"
 
 # COMMAND ----------
 
-# MAGIC 
+# MAGIC
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC describe history silverTable
 
 # COMMAND ----------
@@ -99,13 +100,13 @@ spark.createDataFrame(data=new_countries, schema = columns).write.format("delta"
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC select * from silverTable
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC select * from silverTable
 
 # COMMAND ----------

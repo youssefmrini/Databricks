@@ -31,3 +31,4 @@ if mode == "cleanup":
 # COMMAND ----------
 
 # MAGIC %run ./mount-datasets
+# MAGIC

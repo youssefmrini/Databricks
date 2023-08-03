@@ -129,7 +129,7 @@ show external locations
 
 -- COMMAND ----------
 
-describe external location `songkun-uc-ext-location1`
+describe external location `abraamsamuel`
 
 
 -- COMMAND ----------
@@ -138,7 +138,7 @@ show storage credentials;
 
 -- COMMAND ----------
 
-describe storage credential `uc-external-credential-1`
+describe storage credential `one_env_external_location`
 
 
 -- COMMAND ----------
@@ -150,7 +150,7 @@ describe storage credential `uc-external-credential-1`
 -- COMMAND ----------
 
 --GRANT CREATE TABLE, read files, write files ON external LOCATION `songkun-uc-external-1` TO `youssef.mrini@databricks.com`;
-SHOW GRANTS `youssef.mrini@databricks.com` ON external LOCATION `uc-external-credential-1`;
+SHOW GRANTS `youssef.mrini@databricks.com` ON external LOCATION `abraamsamuel`;
 
 -- COMMAND ----------
 
@@ -161,13 +161,13 @@ SHOW GRANTS `youssef.mrini@databricks.com` ON external LOCATION `uc-external-cre
 -- COMMAND ----------
 
 --grant CREATE TABLE, read files, write files ON STORAGE CREDENTIAL `songkun-uc-external-1` TO `youssef.mrini@databricks.com`;
-SHOW GRANTS `youssef.mrini@databricks.com` ON STORAGE CREDENTIAL `uc-external-credential-1`;
+SHOW GRANTS `youssef.mrini@databricks.com` ON STORAGE CREDENTIAL `one_env_external_location`;
 
 
 -- COMMAND ----------
 
 create or replace table  demo_uc.boat.titanic_ext 
-using delta location "abfss://songkun-uc-external-1@songkunucexternal.dfs.core.windows.net/demo" 
+using delta location "s3://one-env-uc-external-location/abraamsamuel/youssef"
 as 
 select count(PassengerId) as Nbr, Sex,Pclass, 
        case when Survived=0 then "Dead" 
@@ -184,13 +184,13 @@ describe extended demo_uc.boat.titanic_ext
 
 -- MAGIC %python
 -- MAGIC
--- MAGIC dbutils.fs.rm("abfss://songkun-uc-external-1@songkunucexternal.dfs.core.windows.net/parquet",recurse=True)
+-- MAGIC dbutils.fs.rm("s3://one-env-uc-external-location/abraamsamuel/titanic_parque",recurse=True)
 
 -- COMMAND ----------
 
 --drop table demo_uc.boat.titanic_ext_parquet ;
 create table  demo_uc.boat.titanic_ext_parquet 
-using parquet location "abfss://songkun-uc-external-1@songkunucexternal.dfs.core.windows.net/parquet" 
+using parquet location "s3://one-env-uc-external-location/abraamsamuel/titanic_parquet" 
 as 
 select count(PassengerId) as Nbr, Sex,Pclass, 
        case when Pclass=1 or Pclass=2 then "Rich" 
@@ -210,7 +210,7 @@ describe extended demo_uc.boat.titanic_ext_parquet
 
 -- COMMAND ----------
 
-List "abfss://songkun-uc-external-1@songkunucexternal.dfs.core.windows.net/demo" 
+List "s3://one-env-uc-external-location/abraamsamuel/titanic_parquet" 
 
 -- COMMAND ----------
 
@@ -304,4 +304,33 @@ insert into demo_uc.features.persons values ("Youssef","Mrini","Lord"),("Quentin
 
 -- COMMAND ----------
 
-insert into demo_uc.features.pets values("booby", "Youssef","Mrini") ,("steeve","Quentin","ambard")
+-- MAGIC %md
+-- MAGIC
+-- MAGIC <H1> Tagging and Classification </H1>
+
+-- COMMAND ----------
+
+--Apply tags to catalogs
+ALTER CATALOG demo_uc SET TAGS ("boat", "example");
+
+-- COMMAND ----------
+
+--Apply tags to Databases
+ALTER schema boat SET TAGS ("owner:youssef", "example");
+
+-- COMMAND ----------
+
+--Apply tags to tables
+ALTER table titanic_v2 SET TAGS ("dataset");
+
+-- COMMAND ----------
+
+--Set/unset tags for table column
+ALTER TABLE titanic_v2 ALTER COLUMN Name SET TAGS ( "PII_titanic");
+Alter Table titanic_v2 alter COLUMN Age set TAGS ("PII_titanic","Classified");
+
+
+-- COMMAND ----------
+
+--Set/unset tags for table column
+ALTER TABLE titanic_v2 ALTER COLUMN Age UNSET TAGS ( "PII_titanic" )

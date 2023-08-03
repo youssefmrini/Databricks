@@ -89,6 +89,7 @@ df.createOrReplaceTempView("info")
 
 # MAGIC %md
 # MAGIC Databricks allows to use different languages inside the same notebook by using magic commands. Below we use the ``%sql`` command to write a sql query. You can also exclude colmuns using Except
+# MAGIC
 
 # COMMAND ----------
 
@@ -99,7 +100,7 @@ df.createOrReplaceTempView("info")
 
 # MAGIC %md
 # MAGIC #### Read Backfill Data
-# MAGIC 
+# MAGIC
 # MAGIC Some backfill sensor data (e.g. late arriving or corrected) is provided which we eventually need to merge with the original data.
 
 # COMMAND ----------
@@ -127,9 +128,10 @@ df_backfill.createOrReplaceTempView("historical_bronze_backfill_vw")
 
 # MAGIC %md
 # MAGIC ### Create Bronze Historical Tables
-# MAGIC 
+# MAGIC
 # MAGIC - Ingest raw data into Bronze table
 # MAGIC - Use Delta for all Bronze/Silver/Gold tables
+# MAGIC
 
 # COMMAND ----------
 
@@ -141,9 +143,9 @@ df_backfill.createOrReplaceTempView("historical_bronze_backfill_vw")
 
 # MAGIC %sql
 # MAGIC -- Create a Delta Lake table for the main bronze table
-# MAGIC 
+# MAGIC
 # MAGIC DROP TABLE IF EXISTS sensor_readings_historical_bronze;
-# MAGIC 
+# MAGIC
 # MAGIC CREATE TABLE sensor_readings_historical_bronze
 # MAGIC USING DELTA
 # MAGIC TBLPROPERTIES (
@@ -152,23 +154,26 @@ df_backfill.createOrReplaceTempView("historical_bronze_backfill_vw")
 # MAGIC    delta.appendOnly=true
 # MAGIC   )
 # MAGIC   AS (SELECT * FROM historical_bronze_vw)
+# MAGIC
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC select * from sensor_readings_historical_bronze
+# MAGIC
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC delete from sensor_readings_historical_bronze where id="34fb2d8a-5829-4036-adea-a08ccc2c260c"
+# MAGIC
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC alter table sensor_readings_historical_bronze set tblproperties (   delta.appendOnly=false, 'delta.columnMapping.mode' = 'name',
 # MAGIC    'delta.minReaderVersion' = '2',
 # MAGIC    'delta.minWriterVersion' = '5');
@@ -177,7 +182,7 @@ df_backfill.createOrReplaceTempView("historical_bronze_backfill_vw")
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC alter table sensor_readings_historical_bronze drop column if exists reading_2;
 # MAGIC select * from sensor_readings_historical_bronze;
 
@@ -185,13 +190,13 @@ df_backfill.createOrReplaceTempView("historical_bronze_backfill_vw")
 
 # MAGIC %md
 # MAGIC You can use ALTER TABLE <table_name> DROP COLUMN [IF EXISTS] <column_name> or ALTER TABLE <table_name> DROP COLUMNS [IF EXISTS] (<column_name>, *) to drop a column or a list of columns, respectively, from a Delta table as a metadata-only operation. The columns are effectively “soft-deleted,” as they are still in the underlying Parquet files but are no longer visible to the Delta table.
-# MAGIC 
+# MAGIC
 # MAGIC You can use REORG TABLE <table_name> APPLY (PURGE) to trigger a file rewrite on the files that contain any soft-deleted data such as dropped columns.
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC REORG TABLE sensor_readings_historical_bronze APPLY (PURGE)
 
 # COMMAND ----------
@@ -220,7 +225,7 @@ DeltaTable.createIfNotExists(spark) \
 
 # MAGIC %md
 # MAGIC #### Explore Bronze table
-# MAGIC 
+# MAGIC
 # MAGIC The following few cells demonstrate how tables and data can be explored easily within Databricks.
 
 # COMMAND ----------
@@ -239,27 +244,27 @@ DeltaTable.createIfNotExists(spark) \
 
 # MAGIC %md
 # MAGIC ### Create Silver table
-# MAGIC 
+# MAGIC
 # MAGIC  Let's deal with them and create a clean Silver table.
-# MAGIC 
+# MAGIC
 # MAGIC Process: 
 # MAGIC - Create Delta table based on Bronze data
 # MAGIC - Merge backfill data into new silver table
 # MAGIC - Remove invalid data
-# MAGIC 
+# MAGIC
 # MAGIC #### Create table & Merge Backfill
-# MAGIC 
+# MAGIC
 # MAGIC - Create the silver table based on Bronze data, merge the backfill data using __MERGE INTO__. This would not be possible with standard tables.
 # MAGIC - Explore the new table and show the updated records
 
 # COMMAND ----------
 
-# MAGIC 
+# MAGIC
 # MAGIC %sql
 # MAGIC -- Let's create a Silver table.  We'll start with the Bronze data, then make several improvements
-# MAGIC 
+# MAGIC
 # MAGIC DROP TABLE IF EXISTS sensor_readings_historical_silver;
-# MAGIC 
+# MAGIC
 # MAGIC CREATE TABLE sensor_readings_historical_silver 
 # MAGIC USING DELTA
 # MAGIC TBLPROPERTIES (
@@ -282,6 +287,7 @@ DeltaTable.createIfNotExists(spark) \
 # MAGIC  
 # MAGIC ANALYZE TABLE sensor_readings_historical_silver COMPUTE STATISTICS FOR all COLUMNS;
 # MAGIC desc extended sensor_readings_historical_silver reading_time;
+# MAGIC
 
 # COMMAND ----------
 
@@ -297,9 +303,9 @@ spark.conf.set("spark.databricks.delta.merge.enableLowShuffle","true")
 # COMMAND ----------
 
 # MAGIC %md ###![Delta Lake Logo Tiny](https://pages.databricks.com/rs/094-YMS-629/images/delta-lake-tiny-logo.png) MERGE INTO Support
-# MAGIC 
+# MAGIC
 # MAGIC #### INSERT or UPDATE parquet: 7-step process
-# MAGIC 
+# MAGIC
 # MAGIC With a legacy data pipeline, to insert or update a table, you must:
 # MAGIC 1. Identify the new rows to be inserted
 # MAGIC 2. Identify the rows that will be replaced (i.e. updated)
@@ -308,32 +314,33 @@ spark.conf.set("spark.databricks.delta.merge.enableLowShuffle","true")
 # MAGIC 5. Delete the original table (and all of those associated files)
 # MAGIC 6. "Rename" the temp table back to the original table name
 # MAGIC 7. Drop the temp table
-# MAGIC 
+# MAGIC
 # MAGIC ![](https://pages.databricks.com/rs/094-YMS-629/images/merge-into-legacy.gif)
-# MAGIC 
-# MAGIC 
+# MAGIC
+# MAGIC
 # MAGIC #### INSERT or UPDATE with Delta Lake
-# MAGIC 
+# MAGIC
 # MAGIC 2-step process: 
 # MAGIC 1. Identify rows to insert or update
 # MAGIC 2. Use `MERGE`
+# MAGIC
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC -- Sql Version
-# MAGIC 
+# MAGIC
 # MAGIC MERGE INTO sensor_readings_historical_silver AS target
 # MAGIC USING historical_bronze_backfill_vw AS source
 # MAGIC ON target.id = source.id
 # MAGIC WHEN MATCHED  THEN UPDATE SET *
 # MAGIC WHEN NOT MATCHED THEN INSERT *
-# MAGIC 
+# MAGIC
 # MAGIC --Python Version
 # MAGIC /*
 # MAGIC from delta.tables import *
 # MAGIC dft=DeltaTable.forName(spark, "sensor_readings_historical_silver")
-# MAGIC 
+# MAGIC
 # MAGIC dft.alias("target").merge(
 # MAGIC     df_backfill.alias("source"),
 # MAGIC     "target.id = source.id") \
@@ -345,13 +352,13 @@ spark.conf.set("spark.databricks.delta.merge.enableLowShuffle","true")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC <h3>To improve query speed, Delta Lake on Databricks supports the ability to optimize the layout of data stored in cloud storage. Delta Lake on Databricks supports two layout algorithms: bin-packing and Z-Ordering </h3>
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC OPTIMIZE sensor_readings_historical_silver ZORDER BY reading_time, device_operational_status
 
 # COMMAND ----------
@@ -360,6 +367,7 @@ spark.conf.set("spark.databricks.delta.merge.enableLowShuffle","true")
 # MAGIC #### Remove invalid records
 # MAGIC - Replace all reading = 999.99 with average of the previous and following readings
 # MAGIC - Demonstrate that all invalid readings were replaced
+# MAGIC
 
 # COMMAND ----------
 
@@ -367,7 +375,7 @@ spark.conf.set("spark.databricks.delta.merge.enableLowShuffle","true")
 # MAGIC -- MegaCorp just informed us of some dirty data.  Occasionally they would receive garbled data.
 # MAGIC -- In those cases, they would put 999.99 in the readings.
 # MAGIC -- Let's find these records
-# MAGIC 
+# MAGIC
 # MAGIC SELECT * 
 # MAGIC FROM sensor_readings_historical_silver
 # MAGIC WHERE reading_1 = 999.99
@@ -375,13 +383,18 @@ spark.conf.set("spark.databricks.delta.merge.enableLowShuffle","true")
 # COMMAND ----------
 
 # MAGIC %md ###![Delta Lake Logo Tiny](https://pages.databricks.com/rs/094-YMS-629/images/delta-lake-tiny-logo.png) DELETE Support
+# MAGIC
+# MAGIC
+# MAGIC
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC -- SQL version
 # MAGIC DELETE FROM sensor_readings_historical_silver where reading_1=999.99; 
+# MAGIC
+# MAGIC
 
 # COMMAND ----------
 
@@ -399,28 +412,28 @@ deltaTable.delete("reading_1=999.99")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC <H2> Change Data Feed </H2>
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC describe history sensor_readings_historical_silver;
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC select * from sensor_readings_historical_silver
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC select * from table_changes("sensor_readings_historical_silver",1,3) 
-# MAGIC 
-# MAGIC 
+# MAGIC
+# MAGIC
 # MAGIC --python version
 # MAGIC --df= spark.read.format("delta").option("readChangeData", True).option("startingVersion", 1).table('sensor_readings_historical_silver')
 # MAGIC --display(df)
@@ -429,31 +442,31 @@ deltaTable.delete("reading_1=999.99")
 
 # MAGIC %md ## ![Delta Lake Tiny Logo](https://pages.databricks.com/rs/094-YMS-629/images/delta-lake-tiny-logo.png) Delta Lake Time Travel
 # MAGIC Delta Lake’s time travel capabilities simplify building data pipelines for use cases including:
-# MAGIC 
+# MAGIC
 # MAGIC * Auditing Data Changes
 # MAGIC * Reproducing experiments & reports
 # MAGIC * Rollbacks
-# MAGIC 
+# MAGIC
 # MAGIC As you write into a Delta table or directory, every operation is automatically versioned.
-# MAGIC 
+# MAGIC
 # MAGIC <img src="https://github.com/risan4841/img/blob/master/transactionallogs.png?raw=true" width=250/>
-# MAGIC 
+# MAGIC
 # MAGIC You can query snapshots of your tables by:
 # MAGIC 1. **Version number**, or
 # MAGIC 2. **Timestamp.**
-# MAGIC 
+# MAGIC
 # MAGIC using Python, Scala, and/or SQL syntax; for these examples we will use the SQL syntax.  
-# MAGIC 
+# MAGIC
 # MAGIC For more information, refer to the [docs](https://docs.delta.io/latest/delta-utility.html#history), or [Introducing Delta Time Travel for Large Scale Data Lakes](https://databricks.com/blog/2019/02/04/introducing-delta-time-travel-for-large-scale-data-lakes.html)
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC --SQL Version
 # MAGIC DESCRIBE HISTORY sensor_readings_historical_silver
 # MAGIC --select max(version) from (DESCRIBE HISTORY sensor_readings_historical_silver)
-# MAGIC 
+# MAGIC
 # MAGIC -- Python Version
 # MAGIC /*
 # MAGIC display(DeltaTable.forName(spark, "sensor_readings_historical_silver").history())
@@ -476,6 +489,7 @@ display(df.where("reading_1=999.99"))
 # MAGIC %md
 # MAGIC ##![Delta Lake Logo Tiny](https://pages.databricks.com/rs/094-YMS-629/images/delta-lake-tiny-logo.png) Schema Evolution
 # MAGIC With the `mergeSchema` option, you can evolve your Delta Lake table schema
+# MAGIC
 
 # COMMAND ----------
 
@@ -509,7 +523,7 @@ df2.write.format("delta").mode("append").option("mergeSchema",True).partitionBy(
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC <li>By default, updateAll and insertAll assign all the columns in the target Delta table with columns of the same name from the source dataset. Any columns in the source dataset that don’t match columns in the target table are ignored. However, in some use cases, it is desirable to automatically add source columns to the target Delta table. To automatically update the table schema during a merge operation with updateAll and insertAll (at least one of them), you can set the Spark session configuration spark.databricks.delta.schema.autoMerge.enabled to true before running the merge operation </li>
 
 # COMMAND ----------
@@ -562,7 +576,7 @@ df2.printSchema()
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC DESCRIBE EXTENDED sensor_readings_historical_silver
 
 # COMMAND ----------
@@ -570,7 +584,7 @@ df2.printSchema()
 # MAGIC %md
 # MAGIC #### Partition by device
 # MAGIC There were only 3 distinct dates in our table so instead we choose to partition by device.
-# MAGIC 
+# MAGIC
 # MAGIC - Partition silver table by device
 # MAGIC - Demonstrate partitioning
 # MAGIC - Explore corresponding directories using dbutils
@@ -580,21 +594,23 @@ df2.printSchema()
 # MAGIC %sql
 # MAGIC -- Let's create a Silver table partitioned by Device. 
 # MAGIC -- Create a new table, so we can compare new and old
-# MAGIC 
+# MAGIC
 # MAGIC DROP TABLE IF EXISTS sensor_readings_historical_silver_by_device;
-# MAGIC 
+# MAGIC
 # MAGIC CREATE TABLE sensor_readings_historical_silver_by_device 
 # MAGIC USING DELTA
 # MAGIC PARTITIONED BY (device_id)
 # MAGIC AS (SELECT * FROM sensor_readings_historical_silver)
-# MAGIC 
+# MAGIC
 # MAGIC -- ALTER TABLE table_name ADD PARTITION part_spec 
+# MAGIC
+# MAGIC
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC -- We can see partition information
-# MAGIC 
+# MAGIC
 # MAGIC DESCRIBE EXTENDED sensor_readings_historical_silver_by_device
 
 # COMMAND ----------
@@ -606,9 +622,9 @@ df2.printSchema()
 
 # MAGIC %sql
 # MAGIC -- Maybe Date would be a good way to partition the data
-# MAGIC 
+# MAGIC
 # MAGIC SELECT DISTINCT DATE(reading_time) FROM sensor_readings_historical_silver
-# MAGIC 
+# MAGIC
 # MAGIC -- Hmmm, there are only three dates, so maybe that's not the best choice.
 
 # COMMAND ----------
@@ -618,15 +634,15 @@ df2.printSchema()
 # MAGIC - No partition
 # MAGIC - Parition by Device_id
 # MAGIC - Partition by date, hour & minute
-# MAGIC 
+# MAGIC
 # MAGIC The query is faster when using the un-partitioned table. One reason might be the overhead of many small files added when partitioning to fine-grained.
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC DROP TABLE IF EXISTS sensor_readings_historical_silver_by_hour_and_minute;
-# MAGIC 
+# MAGIC
 # MAGIC CREATE TABLE sensor_readings_historical_silver_by_hour_and_minute(
 # MAGIC id string,
 # MAGIC reading_time timestamp,
@@ -642,17 +658,18 @@ df2.printSchema()
 # MAGIC )
 # MAGIC USING DELTA
 # MAGIC PARTITIONED BY (date_reading_time, hour_reading_time, minute_reading_time)
+# MAGIC
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC To insert into a table using generated columns, you need to either provide values for all columns, or use insert into t1(c1, c2, ...) without any generated columns in the list.
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC insert into sensor_readings_historical_silver_by_hour_and_minute (
 # MAGIC id,
 # MAGIC reading_time ,
@@ -670,13 +687,13 @@ df2.printSchema()
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC select * from sensor_readings_historical_silver_by_hour_and_minute limit 5
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC SELECT * 
 # MAGIC FROM sensor_readings_historical_silver
 # MAGIC WHERE 
@@ -687,7 +704,7 @@ df2.printSchema()
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC SELECT * 
 # MAGIC FROM sensor_readings_historical_silver_by_device
 # MAGIC WHERE 
@@ -698,13 +715,13 @@ df2.printSchema()
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC optimize sensor_readings_historical_silver_by_device zorder by reading_time
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC SELECT * 
 # MAGIC FROM sensor_readings_historical_silver_by_hour_and_minute
 # MAGIC WHERE 
@@ -726,9 +743,9 @@ df2.printSchema()
 
 # MAGIC %sql
 # MAGIC -- Here is an example of a Gold table
-# MAGIC 
+# MAGIC
 # MAGIC DROP TABLE IF EXISTS sensor_readings_historical_gold;
-# MAGIC 
+# MAGIC
 # MAGIC CREATE TABLE sensor_readings_historical_gold
 # MAGIC USING DELTA
 # MAGIC TBLPROPERTIES (
@@ -742,22 +759,24 @@ df2.printSchema()
 # MAGIC FROM sensor_readings_historical_silver
 # MAGIC WHERE device_operational_status LIKE "FAILURE"
 # MAGIC GROUP BY device_id
+# MAGIC
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC SELECT * FROM sensor_readings_historical_gold
 # MAGIC ORDER BY count DESC
+# MAGIC
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC <H1> Vacuum </H1>
-# MAGIC 
+# MAGIC
 # MAGIC Recursively vacuum directories associated with the Delta table and remove data files that are no longer in the latest state of the transaction log for the table and are older than a retention threshold. Files are deleted according to the time they have been logically removed from Delta’s transaction log + retention hours, not their modification timestamps on the storage system. The default threshold is 7 days.
 # MAGIC By default you can time travel to a Delta table up to 30 days old unless you have:
-# MAGIC 
+# MAGIC
 # MAGIC Changed the data or log file retention periods using the following table properties:<br>
 # MAGIC delta.logRetentionDuration = "interval <interval>": controls how long the history for a table is kept. The default is interval 30 days.<br>
 # MAGIC Each time a checkpoint is written, Delta automatically cleans up log entries older than the retention interval. If you set this config to a large enough value, many log entries are retained. This should not impact performance as operations against the log are constant time. Operations on history are parallel but will become more expensive as the log size increases.<br>
@@ -778,18 +797,20 @@ spark.conf.set("spark.databricks.delta.retentionDurationCheck.enabled", "False")
 
 # MAGIC %sql
 # MAGIC describe history   delta.`/FileStore/data` ;
-# MAGIC 
+# MAGIC
 # MAGIC --show tblproperties delta.`/FileStore/data` 
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC <h1> Shallow and Deep clone </h1>
+# MAGIC
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC create or replace table Tableshallow shallow clone sensor_readings_historical_silver version as of 1  location "/FileStore/companyLebara";
+# MAGIC
 
 # COMMAND ----------
 
@@ -803,7 +824,7 @@ dbutils.fs.ls("/FileStore/companyLebara")
 # COMMAND ----------
 
 # MAGIC %sql 
-# MAGIC 
+# MAGIC
 # MAGIC update Tableshallow set device_id='9I009R' 
 
 # COMMAND ----------
@@ -821,6 +842,7 @@ dbutils.fs.ls("/FileStore/companyLebara")
 # MAGIC %sql
 # MAGIC create or replace table Tabledeep deep clone sensor_readings_historical_silver version as of 2
 # MAGIC  location "/FileStore/companyLebaras";
+# MAGIC
 
 # COMMAND ----------
 
@@ -830,5 +852,6 @@ dbutils.fs.ls("/FileStore/companyLebara")
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC 
+# MAGIC
 # MAGIC select *, input_file_name() from Tabledeep;
+# MAGIC

@@ -4,7 +4,7 @@ select current_metastore()
 -- COMMAND ----------
 
 drop share finance;
---drop recipient consumer;
+drop recipient consumer;
 
 -- COMMAND ----------
 
@@ -30,9 +30,15 @@ use ingestion;
 -- COMMAND ----------
 
 alter share finance  
-ADD TABLE mutual_fund
+ADD TABLE mutual_fund 
 COMMENT "Change Data Feed"
 WITH CHANGE DATA FEED;
+
+-- COMMAND ----------
+
+ALTER SHARE <share_name> ADD TABLE <catalog_name>.<schema_name>.<table_name>  [COMMENT "<comment>"]
+   [PARTITION(<clause>)] [AS <alias>]
+   [WITH HISTORY | WITHOUT HISTORY];
 
 -- COMMAND ----------
 

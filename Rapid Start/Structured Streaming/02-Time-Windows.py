@@ -1,7 +1,7 @@
 # Databricks notebook source
-# MAGIC 
+# MAGIC
 # MAGIC %md-sandbox
-# MAGIC 
+# MAGIC
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
 # MAGIC   <img src="https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png" alt="Databricks Learning" style="width: 600px">
 # MAGIC </div>
@@ -10,7 +10,7 @@
 
 # MAGIC %md
 # MAGIC # Working with Time Windows
-# MAGIC 
+# MAGIC
 # MAGIC ## Learning Objectives
 # MAGIC By the end of this lesson, you should be able to:
 # MAGIC * Explain why some methods will not work on streaming data
@@ -18,10 +18,10 @@
 # MAGIC * Compare Tumbling Windows and Sliding Windows
 # MAGIC * Apply watermarking to manage state
 # MAGIC * Plot live graphs using `display`
-# MAGIC 
+# MAGIC
 # MAGIC ## Datasets Used
 # MAGIC The source contains smartphone accelerometer samples from devices and users with the following columns:
-# MAGIC 
+# MAGIC
 # MAGIC | Field          | Description |
 # MAGIC | ------------- | ----------- |
 # MAGIC | Arrival_Time | time data was received |
@@ -40,9 +40,9 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC ## Getting Started
-# MAGIC 
+# MAGIC
 # MAGIC Run the following cell to configure our "classroom."
 
 # COMMAND ----------
@@ -52,9 +52,9 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC ### Define the Schema and Configure Streaming Read
-# MAGIC 
+# MAGIC
 # MAGIC This lesson uses the same data as the previous notebook. The logic below defines the path and schema, sets up a streaming read, and selects only those fields that will be examined in this notebook. Note that the `Creation_Time` field had been encoded in nanonseconds and is being converted back to unixtime.
 
 # COMMAND ----------
@@ -80,9 +80,9 @@ display(streamingDF)
 
 # MAGIC %md
 # MAGIC ### Unsupported Operations
-# MAGIC 
+# MAGIC
 # MAGIC Most operations on a streaming DataFrame are identical to a static DataFrame. There are [some exceptions to this](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html#unsupported-operations).
-# MAGIC 
+# MAGIC
 # MAGIC Consider the model of the data as a constantly appending table. Sorting is one of a handful of operations that is either too complex or logically not possible to do when working with streaming data.
 
 # COMMAND ----------
@@ -98,60 +98,60 @@ except Exception as e:
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC ## Streaming Aggregations
-# MAGIC 
+# MAGIC
 # MAGIC Continuous applications often require near real-time decisions on real-time, aggregated statistics.
-# MAGIC 
+# MAGIC
 # MAGIC Some examples include
 # MAGIC * Aggregating errors in data from IoT devices by type
 # MAGIC * Detecting anomalous behavior in a server's log file by aggregating by country.
 # MAGIC * Doing behavior analysis on instant messages via hash tags.
-# MAGIC 
+# MAGIC
 # MAGIC While these streaming aggregates may need to reference historic trends, generally analytics will be calculated over discrete units of time. Spark Structured Streaming supports time-based **windows** on streaming DataFrames to make these calculations easy.
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC ## What is Time?
-# MAGIC 
+# MAGIC
 # MAGIC Multiple times may be associated with each streaming event. Consider the discrete differences between the time at which the event data was:
 # MAGIC - Generated
 # MAGIC - Written to the streaming source
 # MAGIC - Processed into Spark
-# MAGIC 
+# MAGIC
 # MAGIC Each of these times will be recorded from the system clock of the machine running the process. Discrepancies and latencies may have many different causes. 
-# MAGIC 
+# MAGIC
 # MAGIC Generally speaking, most analytics will be interested in the time the data was generated. As such, this lesson will focus on timestamps recorded at the time of data generation, here referred to as the **event time**.
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC ## Windowing
-# MAGIC 
+# MAGIC
 # MAGIC Defining windows on a time series field allows users to utilize this field for aggregations in the same way they would use distinct values when calling `GROUP BY`. The state table will maintain aggregates for each user-defined bucket of time. Spark supports two types of windows:
-# MAGIC 
+# MAGIC
 # MAGIC **Tumbling Windows**
-# MAGIC 
+# MAGIC
 # MAGIC Windows do not overlap, but rather represent distinct buckets of time. Each event will be aggregated into only one window. 
-# MAGIC 
+# MAGIC
 # MAGIC **Sliding windows** 
-# MAGIC 
+# MAGIC
 # MAGIC The windows overlap and a single event may be aggregated into multiple windows. 
-# MAGIC 
+# MAGIC
 # MAGIC The diagram below from the <a href="https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html" target="_blank">Structured Streaming Programming Guide</a> guide shows sliding windows.
 # MAGIC <img src="http://spark.apache.org/docs/latest/img/structured-streaming-window.png">
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC ### Define a Windowed Aggregation
-# MAGIC 
+# MAGIC
 # MAGIC The method `window` accepts a timestamp column and a window duration to define tumbling windows. Adding a third argument for `slideDuration` allows definition of a sliding window; see [documentation](http://spark.apache.org/docs/latest/api/python/pyspark.sql.html?highlight=window#pyspark.sql.functions.window) for more details.
-# MAGIC 
+# MAGIC
 # MAGIC Here, the count of actions for each hour is aggregated.
 
 # COMMAND ----------
@@ -174,7 +174,7 @@ countsDF = (streamingDF
 # MAGIC %md
 # MAGIC ### Performance Considerations
 # MAGIC Because aggregation will trigger a shuffle, configuring the number of partitions can reduce the number of tasks and properly balance the workload for the cluster.
-# MAGIC 
+# MAGIC
 # MAGIC In most cases, a 1-to-1 mapping of partitions to cores is ideal for streaming applications. The code below sets the number of partitions to 8, which maps perfectly to a cluster with 8 cores.
 
 # COMMAND ----------
@@ -184,16 +184,16 @@ spark.conf.set("spark.sql.shuffle.partitions", 8)
 # COMMAND ----------
 
 # MAGIC %md-sandbox
-# MAGIC 
+# MAGIC
 # MAGIC ### View and Plot Results
-# MAGIC 
+# MAGIC
 # MAGIC To view the results of our query, pass the DataFrame `countsDF` to the `display()` function.
-# MAGIC 
+# MAGIC
 # MAGIC Once the data is loaded, render a line graph with
 # MAGIC * **Keys** is set to `start`
 # MAGIC * **Series groupings** is set to `action`
 # MAGIC * **Values** is set to `count`
-# MAGIC 
+# MAGIC
 # MAGIC <img alt="Side Note" title="Side Note" style="vertical-align: text-bottom; position: relative; height:1.75em; top:0.05em; transform:rotate(15deg)" src="https://files.training.databricks.com/static/images/icon-note.webp"/> Remember that calling `display` starts a stream with `memory` as the sink. In production, this would be written to a durable sink using the `complete` output mode.
 
 # COMMAND ----------
@@ -203,9 +203,9 @@ display(countsDF)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC ### Stop all Streams
-# MAGIC 
+# MAGIC
 # MAGIC When you are done, stop all the streaming jobs.
 
 # COMMAND ----------
@@ -216,19 +216,19 @@ for s in spark.streams.active: # Iterate over all active streams
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC ## Watermarking
-# MAGIC 
+# MAGIC
 # MAGIC By default, Structured Streaming keeps around only the minimal intermediate state required to update the results table. When aggregating with many buckets over a long running stream, this can lead to slowdown and eventually OOM errors as the number of buckets calculated with each trigger grows.
-# MAGIC 
+# MAGIC
 # MAGIC **Watermarking** allows users to define a cutoff threshold for how much state should be maintained. This cutoff is calculated against the max event time seen by the engine (i.e., the most recent event). Late arriving data outside of this threshold will be discarded.
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC ### Run a Stream with Watermarking
-# MAGIC 
+# MAGIC
 # MAGIC The `withWatermark` option allows users to easily define this cutoff threshold.
 
 # COMMAND ----------
@@ -249,22 +249,22 @@ display(watermarkedDF)     # Start the stream and display it
 # COMMAND ----------
 
 # MAGIC %md-sandbox
-# MAGIC 
+# MAGIC
 # MAGIC ### Example Details
-# MAGIC 
+# MAGIC
 # MAGIC The threshold is always calculated against the max event time seen.
-# MAGIC 
+# MAGIC
 # MAGIC In the example above,
 # MAGIC * The in-memory state is limited to two hours of historic data.
 # MAGIC * Data arriving more than 2 hours late should be dropped.
 # MAGIC * Data received within 2 hours of being generated will never be dropped.
-# MAGIC 
+# MAGIC
 # MAGIC <img alt="Caution" title="Caution" style="vertical-align: text-bottom; position: relative; height:1.3em; top:0.0em" src="https://files.training.databricks.com/static/images/icon-warning.svg"/> This guarantee is strict in only one direction. Data delayed by more than 2 hours is not guaranteed to be dropped; it may or may not get aggregated. The more delayed the data is, the less likely the engine is going to process it.
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC ### Stop all the streams
 
 # COMMAND ----------
@@ -279,6 +279,7 @@ for s in spark.streams.active: # Iterate over all active streams
 # MAGIC - A handful of operations valid for static DataFrames will not work with streaming data
 # MAGIC - Windows allow users to define time-based buckets for aggregating streaming data
 # MAGIC - Watermarking allows users to manage the amount of state being calculated with each trigger and define how late-arriving data should be handled
+# MAGIC
 
 # COMMAND ----------
 
