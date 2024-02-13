@@ -15,7 +15,6 @@ create catalog external_share using share `tde-azure`.boat
 
 -- COMMAND ----------
 
-
 use catalog external_share;
 show databases;
 

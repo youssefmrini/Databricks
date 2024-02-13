@@ -1,6 +1,6 @@
 -- Databricks notebook source
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC <h1> Dbutils </H1>
 
 -- COMMAND ----------
@@ -11,13 +11,13 @@
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC 
+-- MAGIC
 -- MAGIC dbutils.fs.ls("/user/hive/warehouse")
 
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC <H1> Hive </H1>
 
 -- COMMAND ----------
@@ -27,7 +27,7 @@ show databases
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC 
+-- MAGIC
 -- MAGIC dbutils.fs.ls("dbfs:/databricks-datasets/amazon/data20K")
 
 -- COMMAND ----------
@@ -49,7 +49,7 @@ use hivedemoyoussef
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC 
+-- MAGIC
 -- MAGIC dbutils.fs.ls("dbfs:/youssefmrini")
 
 -- COMMAND ----------
@@ -68,7 +68,7 @@ describe detail hivedemoyoussef.amazon
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC 
+-- MAGIC
 -- MAGIC df=spark.sql("show tables from hivedemoyoussef")
 -- MAGIC display(df)
 
@@ -93,7 +93,7 @@ describe extended externeldelta
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC 
+-- MAGIC
 -- MAGIC df=spark.table("ExternelDelta")
 -- MAGIC df.write.format("delta").mode("overwrite").option("overwriteSchema",True).partitionBy("rating").save("dbfs:/youssefmrini/amazonexternales")
 
@@ -117,7 +117,7 @@ describe extended ManagedDelta
 
 -- MAGIC %md
 -- MAGIC <h2> Change the order of the columns and Insert columns in a specific order </H2> <br>
--- MAGIC 
+-- MAGIC
 -- MAGIC <a href="https://docs.databricks.com/delta/delta-batch.html#explicitly-update-schema"> Documentation </a>
 
 -- COMMAND ----------
@@ -179,7 +179,7 @@ select * from carinfos
 -- MAGIC <li>Automatic vs manual control: When the Delta cache is enabled, data that has to be fetched from a remote source is automatically added to the cache. This process is fully transparent and does not require any action. However, to preload data into the cache beforehand, you can use the CACHE command (see Cache a subset of the data). When you use the Spark cache, you must manually specify the tables and queries to cache.</li>
 -- MAGIC <li>Disk vs memory-based: The Delta cache is stored on the local disk, so that memory is not taken away from other operations within Spark. Due to the high read speeds of modern SSDs, the Delta cache can be fully disk-resident without a negative impact on its performance. In contrast, the Spark cache uses memory.</li>
 -- MAGIC </ul>  
--- MAGIC 
+-- MAGIC
 -- MAGIC <h4> The Delta cache works for all Parquet files and is not limited to Delta Lake format files. </h4>
 
 -- COMMAND ----------
@@ -189,8 +189,7 @@ select * from carinfos
 
 -- COMMAND ----------
 
--- MAGIC %sql
--- MAGIC cache select * from ManagedDelta
+cache select * from ManagedDelta
 
 -- COMMAND ----------
 
@@ -209,14 +208,13 @@ select * from carinfos
 
 -- COMMAND ----------
 
--- MAGIC %sql
--- MAGIC use hivedemoyoussef;
--- MAGIC drop table ExternelDelta;
+use hivedemoyoussef;
+drop table ExternelDelta;
 
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC 
+-- MAGIC
 -- MAGIC df=spark.read.format("delta").load("dbfs:/youssefmrini/amazonexternales")
 -- MAGIC display(df)
 

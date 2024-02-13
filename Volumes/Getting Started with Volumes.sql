@@ -68,7 +68,6 @@ show grants on volume dataset
 
 -- COMMAND ----------
 
-
 create table  if not exists games using delta;
 ALTER TABLE games SET TBLPROPERTIES (
    'delta.columnMapping.mode' = 'name',

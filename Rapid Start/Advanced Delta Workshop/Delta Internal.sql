@@ -1,10 +1,8 @@
 -- Databricks notebook source
--- MAGIC %sql
--- MAGIC 
--- MAGIC use databricks_youssefmrini;
+
+use databricks_youssefmrini;
 
 -- COMMAND ----------
-
 
 drop database databricks_youssefmrini cascade;
 create database databricks_youssefmrini;
@@ -24,17 +22,15 @@ Location '/FileStore/youssefdelta';
 
 -- COMMAND ----------
 
-
 select metaData.*,commitInfo.* from json.`dbfs:/FileStore/youssefdelta/_delta_log/00000000000000000000.json`
 
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC <h1> Insert Data </H1>
 
 -- COMMAND ----------
-
 
 INSERT INTO colleagues VALUES ('Youssef Mrini',28, 70, '30 rue Paris', 1),('Quentin Ambard',33,65,'30 Rue Lisbone', 2);
 
@@ -42,7 +38,6 @@ SELECT * FROM colleagues;
 
 
 -- COMMAND ----------
-
 
 select add.*,commitInfo.* from json.`dbfs:/FileStore/youssefdelta/_delta_log/00000000000000000001.json`
 
@@ -61,7 +56,7 @@ insert  into colleagues_paris values ('Hichem Kenniche',35,75,'30 Rue Berlin',4)
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC <h1> Merge into </H1>
 
 -- COMMAND ----------
@@ -79,7 +74,7 @@ select add.*,commitInfo.* from json.`dbfs:/FileStore/youssefdelta/_delta_log/000
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC <h1> Optimize </H1>
 
 -- COMMAND ----------
@@ -93,7 +88,7 @@ select add.*,remove.*,commitInfo.* from json.`dbfs:/FileStore/youssefdelta/_delt
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC <H1> Delete </h1>
 
 -- COMMAND ----------
@@ -107,7 +102,7 @@ select commitInfo.*,remove.* from json.`dbfs:/FileStore/youssefdelta/_delta_log/
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC <h1> Overwrite </H1>
 
 -- COMMAND ----------
@@ -122,9 +117,9 @@ select add.*,commitInfo.*, remove.* from json.`dbfs:/FileStore/youssefdelta/_del
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC <H3> Update the table multiple time to reach 10 commits in order to have the checkpoint </H3>
--- MAGIC 
+-- MAGIC
 -- MAGIC <br> Insert Into / Delete / Optimize
 
 -- COMMAND ----------
@@ -142,13 +137,13 @@ optimize colleagues;
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC <h1> Change the partition </H1>
 
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC 
+-- MAGIC
 -- MAGIC df=spark.table("colleagues")
 -- MAGIC df.write.format("delta").mode("overwrite").option("overwriteSchema", "true").partitionBy("BricksterId").saveAsTable("colleagues")
 
@@ -158,20 +153,18 @@ select add.*, metaData.* from json.`dbfs:/FileStore/youssefdelta/_delta_log/0000
 
 -- COMMAND ----------
 
--- MAGIC %sql
--- MAGIC 
--- MAGIC optimize colleagues;
+
+optimize colleagues;
 
 -- COMMAND ----------
 
--- MAGIC %sql
--- MAGIC use databricks_youssefmrini;
--- MAGIC describe history colleagues;
+use databricks_youssefmrini;
+describe history colleagues;
 
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC <H1> File Added </H1>
 
 -- COMMAND ----------
@@ -181,7 +174,7 @@ select add.* from parquet.`dbfs:/FileStore/youssefdelta/_delta_log/0000000000000
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC <H1> File Removed </H1>
 
 -- COMMAND ----------
@@ -191,7 +184,7 @@ select remove.* from parquet.`dbfs:/FileStore/youssefdelta/_delta_log/0000000000
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC 
+-- MAGIC
 -- MAGIC <H1> Metadata </H1>
 
 -- COMMAND ----------

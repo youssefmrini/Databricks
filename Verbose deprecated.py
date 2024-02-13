@@ -96,10 +96,6 @@ fin.write.mode("overwrite").option("overwriteSchema", "true").saveAsTable("analy
 
 # COMMAND ----------
 
-
-
-# COMMAND ----------
-
 # MAGIC %sql
 # MAGIC
 # MAGIC select * from analysis.stats.notebookslog
@@ -195,8 +191,6 @@ finaltable.write.mode("overwrite").option("overwriteSchema", "true").saveAsTable
 # MAGIC select *,properties.* from analysis.stats.clusters
 
 # COMMAND ----------
-
-
 
 from pyspark.sql.types import StructType,StructField, StringType, IntegerType
 from pyspark.sql.functions import *

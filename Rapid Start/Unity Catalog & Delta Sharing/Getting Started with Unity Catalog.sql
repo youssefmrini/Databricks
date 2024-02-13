@@ -225,11 +225,10 @@ select * from titanic_ext
 
 -- COMMAND ----------
 
--- MAGIC %sql
--- MAGIC
--- MAGIC --drop view demo_uc.boat.titanic_redacted;
--- MAGIC --drop view demo_uc.boat.titanic_redacted_row;
--- MAGIC --drop view demo_uc.boat.titanic_redacted_row_v2;
+
+--drop view demo_uc.boat.titanic_redacted;
+--drop view demo_uc.boat.titanic_redacted_row;
+--drop view demo_uc.boat.titanic_redacted_row_v2;
 
 -- COMMAND ----------
 
@@ -238,7 +237,6 @@ create view demo_uc.boat.titanic_redacted  as select  Nbr, case when is_account_
 
 
 -- COMMAND ----------
-
 
 select * from demo_uc.boat.titanic_redacted
 
@@ -272,7 +270,6 @@ use catalog demo_uc;
 --drop database features cascade;
 
 -- COMMAND ----------
-
 
 create database features;
 use features;
